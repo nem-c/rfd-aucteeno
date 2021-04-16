@@ -1,0 +1,24 @@
+name: RFD_GitHub_CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-suggest
+
+      - name: Run PHPStan
+        run: vendor/bin/phpstan analyse . -l8 --memory-limit=1G
+
+      - name: Run PHPCS
+        run: vendor/bin/phpcs --standard=phpcs.xml .
