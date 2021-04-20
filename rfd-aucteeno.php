@@ -11,7 +11,7 @@
  * License:     GPL2
  * Requires at least: 5.1
  * Tested up to: 5.7
- * Requires PHP: 7.1
+ * Requires PHP: 7.2
  *
  * @package RFD\Aucteeno
  */

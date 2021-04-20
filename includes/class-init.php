@@ -68,5 +68,16 @@ class Init extends Abstract_Init {
 	 * Prepare hooks for both admin and frontend.
 	 */
 	protected function prepare_general(): void {
+		Globals::init();
+
+		$this->add_post_type( 'RFD\Aucteeno\Post_Types\Catalog_Post_Type' );
+		$this->add_post_type( 'RFD\Aucteeno\Post_Types\Listing_Post_Type' );
+	}
+
+	/**
+	 * Prepare hooks for admin side only.
+	 */
+	protected function prepare_admin(): void {
+		$this->add_meta_box( 'RFD\Aucteeno\Admin\Meta_Boxes\Catalog_Dates_Meta_Box' );
 	}
 }
