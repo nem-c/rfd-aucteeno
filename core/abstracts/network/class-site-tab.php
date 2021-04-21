@@ -12,6 +12,8 @@ namespace RFD\Core\Abstracts\Network;
 
 use RFD\Core\Loader;
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Class Site_Tab
  *

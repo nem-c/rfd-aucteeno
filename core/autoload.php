@@ -7,11 +7,10 @@
  * @subpackage RFD\Core\Autoloader
  */
 
-if ( ! defined( 'WPINC' ) ) {
-	die;
-}
+defined( 'ABSPATH' ) || exit;
 
 require_once 'constants.php';
+require_once 'functions/functions.php';
 
 spl_autoload_register(
 	function ( $filename ) {

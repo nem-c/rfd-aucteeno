@@ -12,6 +12,8 @@ namespace RFD\Core\Admin;
 
 use RFD\Core\Loader;
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Class Menu
  *

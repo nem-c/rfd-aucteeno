@@ -18,6 +18,8 @@ use RFD\Core\Admin\Menu;
 use RFD\Core\Enqueue;
 use RFD\Core\Loader;
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Class Init
  *

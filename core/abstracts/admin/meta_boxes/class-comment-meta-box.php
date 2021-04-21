@@ -15,6 +15,8 @@ use RFD\Core\Logger;
 use \WP_Error;
 use \WP_Comment;
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Class Comment_Meta_Box
  *

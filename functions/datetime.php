@@ -5,6 +5,8 @@
  * @package RFD\Aucteeno
  */
 
+defined( 'ABSPATH' ) || exit;
+
 if ( false === function_exists( 'wp_datetime_string_to_zulu' ) ) {
 	/**
 	 * Convert datetime string in timezone to zulu timezone (GMT)

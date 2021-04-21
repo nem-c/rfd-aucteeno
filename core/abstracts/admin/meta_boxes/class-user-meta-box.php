@@ -15,6 +15,8 @@ use RFD\Core\Logger;
 use \WP_Error;
 use \WP_User;
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Class User_Meta_Box
  *

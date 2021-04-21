@@ -12,6 +12,8 @@ namespace RFD\Core;
 
 use Exception;
 use RFD\Core\Abstracts\Data;
+use RFD\Core\DateTime;
+use DateTimeZone;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -115,7 +117,7 @@ class Data_Store_WP {
 		), $object->get_data_keys() ), $this->internal_meta_keys );
 		$meta_data                = array_filter( $raw_meta_data, array( $this, 'exclude_internal_meta_keys' ) );
 
-		return apply_filters( "woocommerce_data_store_wp_{$this->meta_type}_read_meta", $meta_data, $object, $this );
+		return apply_filters( "rfd_data_store_wp_{$this->meta_type}_read_meta", $meta_data, $object, $this );
 	}
 
 	/**
@@ -327,7 +329,7 @@ class Data_Store_WP {
 			}
 		}
 
-		return apply_filters( 'woocommerce_get_wp_query_args', $wp_query_args, $query_vars );
+		return apply_filters( 'rfd_get_wp_query_args', $wp_query_args, $query_vars );
 	}
 
 	/**
@@ -353,24 +355,24 @@ class Data_Store_WP {
 		$operator = '=';
 
 		try {
-			// Specific time query with a WC_DateTime.
-			if ( is_a( $query_var, 'WC_DateTime' ) ) {
+			// Specific time query with a DateTime.
+			if ( is_a( $query_var, 'DateTime' ) ) {
 				$dates[] = $query_var;
 			} elseif ( is_numeric( $query_var ) ) { // Specific time query with a timestamp.
-				$dates[] = new WC_DateTime( "@{$query_var}", new DateTimeZone( 'UTC' ) );
+				$dates[] = new DateTime( "@{$query_var}", new DateTimeZone( 'UTC' ) );
 			} elseif ( preg_match( $query_parse_regex, $query_var, $sections ) ) { // Query with operators and possible range of dates.
 				if ( ! empty( $sections[1] ) ) {
-					$dates[] = is_numeric( $sections[1] ) ? new WC_DateTime( "@{$sections[1]}", new DateTimeZone( 'UTC' ) ) : wc_string_to_datetime( $sections[1] );
+					$dates[] = is_numeric( $sections[1] ) ? new DateTime( "@{$sections[1]}", new DateTimeZone( 'UTC' ) ) : rfd_string_to_datetime( $sections[1] );
 				}
 
 				$operator = in_array( $sections[2], $valid_operators, true ) ? $sections[2] : '';
-				$dates[]  = is_numeric( $sections[3] ) ? new WC_DateTime( "@{$sections[3]}", new DateTimeZone( 'UTC' ) ) : wc_string_to_datetime( $sections[3] );
+				$dates[]  = is_numeric( $sections[3] ) ? new DateTime( "@{$sections[3]}", new DateTimeZone( 'UTC' ) ) : rfd_string_to_datetime( $sections[3] );
 
 				if ( ! is_numeric( $sections[1] ) && ! is_numeric( $sections[3] ) ) {
 					$precision = 'day';
 				}
 			} else { // Specific time query with a string.
-				$dates[]   = wc_string_to_datetime( $query_var );
+				$dates[]   = rfd_string_to_datetime( $query_var );
 				$precision = 'day';
 			}
 		} catch ( Exception $e ) {
@@ -445,8 +447,8 @@ class Data_Store_WP {
 		// Meta dates are stored as timestamps in the db.
 		// Check against beginning/end-of-day timestamps when using 'day' precision.
 		if ( 'day' === $precision ) {
-			$start_timestamp = strtotime( gmdate( 'm/d/Y 00:00:00', $dates[0]->getTimestamp() ) );
-			$end_timestamp   = '...' !== $operator ? ( $start_timestamp + DAY_IN_SECONDS ) : strtotime( gmdate( 'm/d/Y 00:00:00', $dates[1]->getTimestamp() ) );
+			$start_timestamp = strtotime( gmdate( 'm/d/Y 00:00:00', $dates[0]->get_timestamp() ) );
+			$end_timestamp   = '...' !== $operator ? ( $start_timestamp + DAY_IN_SECONDS ) : strtotime( gmdate( 'm/d/Y 00:00:00', $dates[1]->get_timestamp() ) );
 			switch ( $operator ) {
 				case '>':
 				case '<=':
@@ -480,18 +482,18 @@ class Data_Store_WP {
 			if ( '...' !== $operator ) {
 				$wp_query_args['meta_query'][] = array(
 					'key'     => $key,
-					'value'   => $dates[0]->getTimestamp(),
+					'value'   => $dates[0]->get_timestamp(),
 					'compare' => $operator,
 				);
 			} else {
 				$wp_query_args['meta_query'][] = array(
 					'key'     => $key,
-					'value'   => $dates[0]->getTimestamp(),
+					'value'   => $dates[0]->get_timestamp(),
 					'compare' => '>=',
 				);
 				$wp_query_args['meta_query'][] = array(
 					'key'     => $key,
-					'value'   => $dates[1]->getTimestamp(),
+					'value'   => $dates[1]->get_timestamp(),
 					'compare' => '<=',
 				);
 			}
@@ -537,7 +539,7 @@ class Data_Store_WP {
 				continue;
 			}
 
-			if ( in_array( wc_strtolower( $term ), $stopwords, true ) ) {
+			if ( in_array( rfd_strtolower( $term ), $stopwords, true ) ) {
 				continue;
 			}
 
@@ -661,6 +663,6 @@ class Data_Store_WP {
 	 * @return int|null The date string converted to a timestamp or null.
 	 */
 	protected function string_to_timestamp( $time_string ): ?int {
-		return '0000-00-00 00:00:00' !== $time_string ? wc_string_to_timestamp( $time_string ) : null;
+		return '0000-00-00 00:00:00' !== $time_string ? rfd_string_to_timestamp( $time_string ) : null;
 	}
 }

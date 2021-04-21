@@ -10,6 +10,8 @@
 
 namespace RFD\Core\Abstracts;
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Class Block
  *

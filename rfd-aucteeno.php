@@ -18,15 +18,13 @@
 
 namespace RFD\Aucteeno;
 
-if ( ! defined( 'WPINC' ) ) {
-	die;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Current plugin version.
  */
 define( 'RFD_AUCTEENO_PLUGIN', 'rfd-aucteeno' );
-define( 'RFD_AUCTEENO_VERSION', '1.0.5' );
+define( 'RFD_AUCTEENO_VERSION', '0.9.0' );
 
 define( 'RFD_AUCTEENO_PLUGIN_DIR', dirname( __FILE__ ) . DIRECTORY_SEPARATOR );
 define( 'RFD_AUCTEENO_PLUGIN_URL', plugin_dir_url( __FILE__ ) );

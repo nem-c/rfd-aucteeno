@@ -2,7 +2,7 @@
 <ruleset name="RFD_WP_CodingStandards">
     <description>PHP_CS for RFD plugins and themes</description>
 
-    <config name="testVersion" value="7.1-"/>
+    <config name="testVersion" value="7.2-"/>
 
     <rule ref="WordPress">
         <exclude name="Squiz.Commenting.FunctionComment.SpacingAfterParamType"/>

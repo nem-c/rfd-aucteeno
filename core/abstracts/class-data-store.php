@@ -3,7 +3,9 @@
 namespace RFD\Core\Abstracts;
 
 use Exception;
-use RFD\Core\Contracts\Object_Data_Store as Object_Data_Store_Interface;
+use RFD\Core\Contracts\Object_Data_Store_Interface;
+
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Class Data_Store
@@ -41,34 +43,33 @@ abstract class Data_Store {
 	protected $object_type = '';
 
 	/**
-	 * Tells Data_Store which object (coupon, product, order, etc)
-	 * store we want to work with.
+	 * Tells Data_Store which object store we want to work with.
 	 *
 	 * @param string $object_type Name of object.
 	 *
 	 * @throws Exception When validation fails.
 	 */
-	public function __construct( $object_type ) {
+	public function __construct( string $object_type ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded,Generic.Metrics.NestingLevel.MaxExceeded
 		$this->object_type = $object_type;
 		$this->stores      = apply_filters( 'rfd_data_stores', $this->stores );
 
 		// If this object type can't be found, check to see if we can load one
 		// level up (so if product-type isn't found, we try product).
-		if ( ! array_key_exists( $object_type, $this->stores ) ) {
+		if ( false === array_key_exists( $object_type, $this->stores ) ) {
 			$pieces      = explode( '-', $object_type );
 			$object_type = $pieces[0];
 		}
 
 		if ( array_key_exists( $object_type, $this->stores ) ) {
 			$store = apply_filters( 'rfd_' . $object_type . '_data_store', $this->stores[ $object_type ] );
-			if ( is_object( $store ) ) {
-				if ( ! $store instanceof Object_Data_Store_Interface ) {
+			if ( true === is_object( $store ) ) {
+				if ( false === $store instanceof Object_Data_Store_Interface ) {
 					throw new Exception( __( 'Invalid data store.', 'rfd-core' ) );
 				}
 				$this->current_class_name = get_class( $store );
 				$this->instance           = $store;
 			} else {
-				if ( ! class_exists( $store ) ) {
+				if ( false === class_exists( $store ) ) {
 					throw new Exception( __( 'Invalid data store.', 'rfd-core' ) );
 				}
 				$this->current_class_name = $store;
@@ -105,7 +106,7 @@ abstract class Data_Store {
 	 * @return Data_Store
 	 * @throws Exception When validation fails.
 	 */
-	public static function load( $object_type ) {
+	public static function load( string $object_type ): Data_Store {
 		return new static( $object_type );
 	}
 
@@ -113,9 +114,8 @@ abstract class Data_Store {
 	 * Returns the class name of the current data store.
 	 *
 	 * @return string
-	 * @since 3.0.0
 	 */
-	public function get_current_class_name() {
+	public function get_current_class_name(): string {
 		return $this->current_class_name;
 	}
 
@@ -126,7 +126,7 @@ abstract class Data_Store {
 	 *
 	 * @since 3.0.0
 	 */
-	public function read( &$object ) {
+	public function read( Data &$object ) {
 		$this->instance->read( $object );
 	}
 
@@ -137,7 +137,7 @@ abstract class Data_Store {
 	 *
 	 * @since 3.0.0
 	 */
-	public function create( &$object ) {
+	public function create( Data &$object ) {
 		$this->instance->create( $object );
 	}
 
@@ -145,10 +145,8 @@ abstract class Data_Store {
 	 * Update an object in the data store.
 	 *
 	 * @param Data $object Data instance.
-	 *
-	 * @since 3.0.0
 	 */
-	public function update( &$object ) {
+	public function update( Data &$object ) {
 		$this->instance->update( $object );
 	}
 
@@ -158,7 +156,7 @@ abstract class Data_Store {
 	 * @param Data $object Data instance.
 	 * @param array $args Array of args to pass to the delete method.
 	 */
-	public function delete( &$object, $args = array() ) {
+	public function delete( Data &$object, $args = array() ) {
 		$this->instance->delete( $object, $args );
 	}
 
@@ -169,9 +167,12 @@ abstract class Data_Store {
 	 * @param string $method Method.
 	 * @param mixed $parameters Parameters.
 	 *
-	 * @return mixed
+	 * @return mixed|void
 	 */
-	public function __call( $method, $parameters ) {
+	public function __call( string $method, $parameters ) {
+		if ( false === is_callable( array( $this->instance, $method ) ) ) {
+			return;
+		}
 		if ( is_callable( array( $this->instance, $method ) ) ) {
 			$object     = array_shift( $parameters );
 			$parameters = array_merge( array( &$object ), $parameters );

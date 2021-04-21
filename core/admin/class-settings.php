@@ -13,6 +13,8 @@ namespace RFD\Core\Admin;
 use RFD\Core\Input;
 use RFD\Core\Loader;
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Class Settings
  *

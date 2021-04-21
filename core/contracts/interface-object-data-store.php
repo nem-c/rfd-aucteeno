@@ -10,16 +10,14 @@ namespace RFD\Core\Contracts;
 
 use RFD\Core\Abstracts\Data;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * WC Data Store Interface
  *
  * @version  3.0.0
  */
-interface Object_Data_Store {
+interface Object_Data_Store_Interface {
 	/**
 	 * Method to create a new record of a Data based object.
 	 *

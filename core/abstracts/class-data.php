@@ -13,11 +13,11 @@ namespace RFD\Core\Abstracts;
 use Exception;
 use WP_Error;
 use RFD\Core\Data_Store_WP;
+use RFD\Core\DateTime;
+use DateTimeZone;
 use RFD\Core\Exceptions\Data_Exception;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Abstract Data Class
@@ -77,7 +77,6 @@ abstract class Data {
 	/**
 	 * Set to _data on construct so we can track and reset data if needed.
 	 *
-	 * @since 2.3.0
 	 * @var array
 	 */
 	protected $default_data = array();
@@ -142,12 +141,10 @@ abstract class Data {
 
 	/**
 	 * When the object is cloned, make sure meta is duplicated correctly.
-	 *
-	 * @since 2.3.0
 	 */
-	public function __clone() {
+	public function __clone() { // phpcs:ignore Generic.Metrics.NestingLevel.MaxExceeded
 		$this->maybe_read_meta_data();
-		if ( ! empty( $this->meta_data ) ) {
+		if ( false === empty( $this->meta_data ) ) {
 			foreach ( $this->meta_data as $array_key => $meta ) {
 				$this->meta_data[ $array_key ] = clone $meta;
 				if ( ! empty( $meta->id ) ) {
@@ -161,9 +158,8 @@ abstract class Data {
 	 * Get the data store.
 	 *
 	 * @return object
-	 * @since 2.3.0
 	 */
-	public function get_data_store() {
+	public function get_data_store(): object {
 		return $this->data_store;
 	}
 
@@ -171,9 +167,8 @@ abstract class Data {
 	 * Returns the unique ID for this object.
 	 *
 	 * @return int
-	 * @since  2.6.0
 	 */
-	public function get_id() {
+	public function get_id(): int {
 		return $this->id;
 	}
 
@@ -183,9 +178,8 @@ abstract class Data {
 	 * @param bool $force_delete Should the date be deleted permanently.
 	 *
 	 * @return bool result
-	 * @since  2.6.0
 	 */
-	public function delete( $force_delete = false ) {
+	public function delete( $force_delete = false ): bool {
 		if ( $this->data_store ) {
 			$this->data_store->delete( $this, array( 'force_delete' => $force_delete ) );
 			$this->set_id( 0 );
@@ -200,9 +194,8 @@ abstract class Data {
 	 * Save should create or update based on object existence.
 	 *
 	 * @return int
-	 * @since  2.6.0
 	 */
-	public function save() {
+	public function save(): int {
 		if ( ! $this->data_store ) {
 			return $this->get_id();
 		}
@@ -236,7 +229,6 @@ abstract class Data {
 	 * Change data to JSON format.
 	 *
 	 * @return string Data in JSON format.
-	 * @since 2.3.0
 	 */
 	public function __toString() {
 		return wp_json_encode( $this->get_data() );
@@ -246,9 +238,8 @@ abstract class Data {
 	 * Returns all data for this object.
 	 *
 	 * @return array
-	 * @since 2.3.0
 	 */
-	public function get_data() {
+	public function get_data(): array {
 		return array_merge( array( 'id' => $this->get_id() ), $this->data, array( 'meta_data' => $this->get_meta_data() ) );
 	}
 
@@ -256,9 +247,8 @@ abstract class Data {
 	 * Returns array of expected data keys for this object.
 	 *
 	 * @return array
-	 * @since 2.3.0
 	 */
-	public function get_data_keys() {
+	public function get_data_keys(): array {
 		return array_keys( $this->data );
 	}
 
@@ -266,9 +256,8 @@ abstract class Data {
 	 * Returns all "extra" data keys for an object (for sub objects like product types).
 	 *
 	 * @return array
-	 * @since 2.3.0
 	 */
-	public function get_extra_data_keys() {
+	public function get_extra_data_keys(): array {
 		return array_keys( $this->extra_data );
 	}
 
@@ -278,9 +267,8 @@ abstract class Data {
 	 * @param mixed $meta Meta value to check.
 	 *
 	 * @return bool
-	 * @since 2.3.0
 	 */
-	protected function filter_null_meta( $meta ) {
+	protected function filter_null_meta( $meta ): bool {
 		return ! is_null( $meta->value );
 	}
 
@@ -288,9 +276,8 @@ abstract class Data {
 	 * Get All Meta Data.
 	 *
 	 * @return array of objects.
-	 * @since 2.3.0
 	 */
-	public function get_meta_data() {
+	public function get_meta_data(): array {
 		$this->maybe_read_meta_data();
 
 		return array_values( array_filter( $this->meta_data, array( $this, 'filter_null_meta' ) ) );
@@ -302,9 +289,8 @@ abstract class Data {
 	 * @param string $key Key to check.
 	 *
 	 * @return bool   true if it's an internal key, false otherwise
-	 * @since 2.3.0
 	 */
-	protected function is_internal_meta_key( $key ) {
+	protected function is_internal_meta_key( $key ): bool {
 		$internal_meta_key = ! empty( $key ) && $this->data_store && in_array( $key, $this->data_store->get_internal_meta_keys(), true );
 
 		if ( ! $internal_meta_key ) {
@@ -333,9 +319,8 @@ abstract class Data {
 	 * @param string $context What the value is for. Valid values are view and edit.
 	 *
 	 * @return mixed
-	 * @since  2.6.0
 	 */
-	public function get_meta( $key = '', $single = true, $context = 'view' ) {
+	public function get_meta( $key = '', $single = true, $context = 'view' ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded
 		if ( $this->is_internal_meta_key( $key ) ) {
 			$function = 'get_' . $key;
 
@@ -371,9 +356,8 @@ abstract class Data {
 	 * @param string $key Meta Key.
 	 *
 	 * @return boolean
-	 * @since  3.0.0
 	 */
-	public function meta_exists( $key = '' ) {
+	public function meta_exists( $key = '' ): bool {
 		$this->maybe_read_meta_data();
 		$array_keys = wp_list_pluck( $this->get_meta_data(), 'key' );
 
@@ -384,10 +368,8 @@ abstract class Data {
 	 * Set all meta data from array.
 	 *
 	 * @param array $data Key/Value pairs.
-	 *
-	 * @since 2.6.0
 	 */
-	public function set_meta_data( $data ) {
+	public function set_meta_data( array $data ) { // phpcs:ignore Generic.Metrics.NestingLevel.MaxExceeded
 		if ( ! empty( $data ) && is_array( $data ) ) {
 			$this->maybe_read_meta_data();
 			foreach ( $data as $meta ) {
@@ -411,9 +393,6 @@ abstract class Data {
 	 * @param string $key Meta key.
 	 * @param string|array $value Meta value.
 	 * @param bool $unique Should this be a unique key?.
-	 *
-	 * @since 2.6.0
-	 *
 	 */
 	public function add_meta_data( $key, $value, $unique = false ) {
 		if ( $this->is_internal_meta_key( $key ) ) {
@@ -442,16 +421,13 @@ abstract class Data {
 	 * @param string $key Meta key.
 	 * @param string|array $value Meta value.
 	 * @param int $meta_id Meta ID.
-	 *
-	 * @since  2.6.0
-	 *
 	 */
-	public function update_meta_data( $key, $value, $meta_id = 0 ) {
+	public function update_meta_data( string $key, $value, $meta_id = 0 ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded,Generic.Metrics.NestingLevel.MaxExceeded
 		if ( $this->is_internal_meta_key( $key ) ) {
 			$function = 'set_' . $key;
 
 			if ( is_callable( array( $this, $function ) ) ) {
-				return $this->{$function}( $value );
+				$this->{$function}( $value );
 			}
 		}
 
@@ -493,10 +469,8 @@ abstract class Data {
 	 * Delete meta data.
 	 *
 	 * @param string $key Meta key.
-	 *
-	 * @since 2.6.0
 	 */
-	public function delete_meta_data( $key ) {
+	public function delete_meta_data( string $key ) {
 		$this->maybe_read_meta_data();
 		$array_keys = array_keys( wp_list_pluck( $this->meta_data, 'key' ), $key, true );
 
@@ -511,10 +485,8 @@ abstract class Data {
 	 * Delete meta data.
 	 *
 	 * @param int $mid Meta ID.
-	 *
-	 * @since 2.6.0
 	 */
-	public function delete_meta_data_by_mid( $mid ) {
+	public function delete_meta_data_by_mid( int $mid ) {
 		$this->maybe_read_meta_data();
 		$array_keys = array_keys( wp_list_pluck( $this->meta_data, 'id' ), (int) $mid, true );
 
@@ -540,12 +512,10 @@ abstract class Data {
 	 * Helper method to compute meta cache key. Different from WP Meta cache key in that meta data cached using this key also contains meta_id column.
 	 *
 	 * @return string
-	 * @since 4.7.0
-	 *
 	 */
 	public function get_meta_cache_key() {
 		if ( ! $this->get_id() ) {
-			wc_doing_it_wrong( 'get_meta_cache_key', 'ID needs to be set before fetching a cache key.', '4.7.0' );
+			_doing_it_wrong( 'get_meta_cache_key', 'ID needs to be set before fetching a cache key.', '4.7.0' );
 
 			return false;
 		}
@@ -560,10 +530,8 @@ abstract class Data {
 	 * @param string $cache_group Group name use to store cache. Whole group cache can be invalidated in one go.
 	 *
 	 * @return string Meta cache key.
-	 * @since 4.7.0
-	 *
 	 */
-	public static function generate_meta_cache_key( $id, $cache_group ) {
+	public static function generate_meta_cache_key( $id, string $cache_group ): string {
 		return WC_Cache_Helper::get_cache_prefix( $cache_group ) . WC_Cache_Helper::get_cache_prefix( 'object_' . $id ) . 'object_meta_' . $id;
 	}
 
@@ -572,11 +540,8 @@ abstract class Data {
 	 *
 	 * @param array $raw_meta_data_collection Array of objects of { object_id => array( meta_row_1, meta_row_2, ... }.
 	 * @param string $cache_group Name of cache group.
-	 *
-	 * @since 4.7.0
-	 *
 	 */
-	public static function prime_raw_meta_data_cache( $raw_meta_data_collection, $cache_group ) {
+	public static function prime_raw_meta_data_cache( array $raw_meta_data_collection, string $cache_group ) {
 		foreach ( $raw_meta_data_collection as $object_id => $raw_meta_data_array ) {
 			$cache_key = self::generate_meta_cache_key( $object_id, $cache_group );
 			wp_cache_set( $cache_key, $raw_meta_data_array, $cache_group );
@@ -588,10 +553,8 @@ abstract class Data {
 	 * Uses it's own caches because get_metadata does not provide meta_ids.
 	 *
 	 * @param bool $force_read True to force a new DB read (and update cache).
-	 *
-	 * @since 2.6.0
 	 */
-	public function read_meta_data( $force_read = false ) {
+	public function read_meta_data( $force_read = false ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded
 		$this->meta_data = array();
 		$cache_loaded    = false;
 
@@ -637,10 +600,8 @@ abstract class Data {
 
 	/**
 	 * Update Meta Data in the database.
-	 *
-	 * @since 2.6.0
 	 */
-	public function save_meta_data() {
+	public function save_meta_data() { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded,Generic.Metrics.NestingLevel.MaxExceeded
 		if ( ! $this->data_store || is_null( $this->meta_data ) ) {
 			return;
 		}
@@ -670,17 +631,13 @@ abstract class Data {
 	 * Set ID.
 	 *
 	 * @param int $id ID.
-	 *
-	 * @since 3.0.0
 	 */
-	public function set_id( $id ) {
+	public function set_id( int $id ) {
 		$this->id = absint( $id );
 	}
 
 	/**
 	 * Set all props to default values.
-	 *
-	 * @since 3.0.0
 	 */
 	public function set_defaults() {
 		$this->data    = $this->default_data;
@@ -692,8 +649,6 @@ abstract class Data {
 	 * Set object read property.
 	 *
 	 * @param boolean $read Should read?.
-	 *
-	 * @since 3.0.0
 	 */
 	public function set_object_read( $read = true ) {
 		$this->object_read = (bool) $read;
@@ -703,10 +658,9 @@ abstract class Data {
 	 * Get object read property.
 	 *
 	 * @return boolean
-	 * @since  3.0.0
 	 */
-	public function get_object_read() {
-		return (bool) $this->object_read;
+	public function get_object_read(): bool {
+		return $this->object_read;
 	}
 
 	/**
@@ -717,10 +671,8 @@ abstract class Data {
 	 * @param string $context In what context to run this.
 	 *
 	 * @return bool|WP_Error
-	 * @since  3.0.0
-	 *
 	 */
-	public function set_props( $props, $context = 'set' ) {
+	public function set_props( array $props, $context = 'set' ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded,Generic.Metrics.NestingLevel.MaxExceeded
 		$errors = false;
 
 		foreach ( $props as $prop => $value ) {
@@ -736,7 +688,7 @@ abstract class Data {
 				if ( is_callable( array( $this, $setter ) ) ) {
 					$this->{$setter}( $value );
 				}
-			} catch ( WC_Data_Exception $e ) {
+			} catch ( Exception $e ) {
 				if ( ! $errors ) {
 					$errors = new WP_Error();
 				}
@@ -755,10 +707,8 @@ abstract class Data {
 	 *
 	 * @param string $prop Name of prop to set.
 	 * @param mixed $value Value of the prop.
-	 *
-	 * @since 3.0.0
 	 */
-	protected function set_prop( $prop, $value ) {
+	protected function set_prop( string $prop, $value ) { // phpcs:ignore Generic.Metrics.NestingLevel.MaxExceeded
 		if ( array_key_exists( $prop, $this->data ) ) {
 			if ( true === $this->object_read ) {
 				if ( $value !== $this->data[ $prop ] || array_key_exists( $prop, $this->changes ) ) {
@@ -774,16 +724,13 @@ abstract class Data {
 	 * Return data changes only.
 	 *
 	 * @return array
-	 * @since 3.0.0
 	 */
-	public function get_changes() {
+	public function get_changes(): array {
 		return $this->changes;
 	}
 
 	/**
 	 * Merge changes with data and clear.
-	 *
-	 * @since 3.0.0
 	 */
 	public function apply_changes() {
 		$this->data    = array_replace_recursive( $this->data, $this->changes ); // @codingStandardsIgnoreLine
@@ -794,10 +741,9 @@ abstract class Data {
 	 * Prefix for action and filter hooks on data.
 	 *
 	 * @return string
-	 * @since  3.0.0
 	 */
-	protected function get_hook_prefix() {
-		return 'woocommerce_' . $this->object_type . '_get_';
+	protected function get_hook_prefix(): string {
+		return 'rfd_' . $this->object_type . '_get_';
 	}
 
 	/**
@@ -810,7 +756,6 @@ abstract class Data {
 	 * @param string $context What the value is for. Valid values are view and edit.
 	 *
 	 * @return mixed
-	 * @since  3.0.0
 	 */
 	protected function get_prop( $prop, $context = 'view' ) {
 		$value = null;
@@ -831,10 +776,8 @@ abstract class Data {
 	 *
 	 * @param string $prop Name of prop to set.
 	 * @param string|integer $value Value of the prop.
-	 *
-	 * @since 3.0.0
 	 */
-	protected function set_date_prop( $prop, $value ) {
+	protected function set_date_prop( string $prop, $value ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded,Generic.Metrics.NestingLevel.MaxExceeded
 		try {
 			if ( empty( $value ) ) {
 				$this->set_prop( $prop, null );
@@ -842,32 +785,32 @@ abstract class Data {
 				return;
 			}
 
-			if ( is_a( $value, 'WC_DateTime' ) ) {
+			if ( is_a( $value, 'DateTime' ) ) {
 				$datetime = $value;
 			} elseif ( is_numeric( $value ) ) {
 				// Timestamps are handled as UTC timestamps in all cases.
-				$datetime = new WC_DateTime( "@{$value}", new DateTimeZone( 'UTC' ) );
+				$datetime = new DateTime( "@{$value}", new DateTimeZone( 'UTC' ) );
 			} else {
 				// Strings are defined in local WP timezone. Convert to UTC.
 				if ( 1 === preg_match( '/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(Z|((-|\+)\d{2}:\d{2}))$/', $value, $date_bits ) ) {
-					$offset    = ! empty( $date_bits[7] ) ? iso8601_timezone_to_offset( $date_bits[7] ) : wc_timezone_offset();
+					$offset    = ! empty( $date_bits[7] ) ? iso8601_timezone_to_offset( $date_bits[7] ) : rfd_timezone_offset();
 					$timestamp = gmmktime( $date_bits[4], $date_bits[5], $date_bits[6], $date_bits[2], $date_bits[3], $date_bits[1] ) - $offset;
 				} else {
-					$timestamp = wc_string_to_timestamp( get_gmt_from_date( gmdate( 'Y-m-d H:i:s', wc_string_to_timestamp( $value ) ) ) );
+					$timestamp = rfd_string_to_timestamp( get_gmt_from_date( gmdate( 'Y-m-d H:i:s', rfd_string_to_timestamp( $value ) ) ) );
 				}
-				$datetime = new WC_DateTime( "@{$timestamp}", new DateTimeZone( 'UTC' ) );
+				$datetime = new DateTime( "@{$timestamp}", new DateTimeZone( 'UTC' ) );
 			}
 
 			// Set local timezone or offset.
 			if ( get_option( 'timezone_string' ) ) {
-				$datetime->setTimezone( new DateTimeZone( wc_timezone_string() ) );
+				$datetime->set_timezone( new DateTimeZone( rfd_timezone_string() ) );
 			} else {
-				$datetime->set_utc_offset( wc_timezone_offset() );
+				$datetime->set_utc_offset( rfd_timezone_offset() );
 			}
 
 			$this->set_prop( $prop, $datetime );
-		} catch ( Exception $e ) {
-		} // @codingStandardsIgnoreLine.
+		} catch ( Exception $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+		}
 	}
 
 	/**
@@ -879,7 +822,6 @@ abstract class Data {
 	 * @param array $data Extra error data.
 	 *
 	 * @throws Data_Exception Data Exception.
-	 * @since 3.0.0
 	 */
 	protected function error( string $code, string $message, $http_status_code = 400, $data = array() ) {
 		throw new Data_Exception( $code, $message, $http_status_code );

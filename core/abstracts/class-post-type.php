@@ -13,6 +13,8 @@ namespace RFD\Core\Abstracts;
 
 use RFD\Core\Loader;
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Class Post_Type
  *

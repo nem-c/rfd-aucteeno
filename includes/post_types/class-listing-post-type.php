@@ -13,6 +13,8 @@ namespace RFD\Aucteeno\Post_Types;
 
 use RFD\Core\Abstracts\Post_Type;
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Class Listing_Post_Type
  */

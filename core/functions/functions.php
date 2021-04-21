@@ -6,7 +6,8 @@
  * If needed it might use namespace for functions too, to avoid collision with other plugins that
  * might use same function name
  *
- * @package RFD\Aucteeno
+ * @package RFD\Core
+ * @subpackage RFD\Core\Functions
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -15,6 +16,4 @@ defined( 'ABSPATH' ) || exit;
  * Include other function files.
  */
 
-require_once __DIR__ . DIRECTORY_SEPARATOR . 'constants.php';
-require_once __DIR__ . DIRECTORY_SEPARATOR . 'datetime.php';
-require_once __DIR__ . DIRECTORY_SEPARATOR . 'catalog-functions.php';
+require_once __DIR__ . DIRECTORY_SEPARATOR . 'formatting-functions.php';

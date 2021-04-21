@@ -14,10 +14,11 @@ namespace RFD\Aucteeno\Admin\Meta_Boxes;
 use DateTimeZone;
 use DateTime;
 use Exception;
-use RFD\Aucteeno\Globals;
 use WP_Post;
 use RFD\Core\Abstracts\Admin\Meta_Boxes\Post_Meta_Box;
 use RFD\Core\View;
+
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Class Listing_Dates_Meta_Box
@@ -84,22 +85,34 @@ class Catalog_Dates_Meta_Box extends Post_Meta_Box {
 	 * Render meta box.
 	 *
 	 * @param WP_Post $post Post Object.
+	 *
+	 * @throws Exception Exception.
 	 */
 	public function render( WP_Post $post ): void {
 		$nonce_field = $this->nonce_field();
 
-		$catalog_meta = get_post_meta( $post->ID );
-		Globals::set_catalog_meta( $post->ID, $catalog_meta );
+		try {
+			$catalog = acn_get_catalog( $post->ID );
+		} catch ( Exception $exception ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			_doing_it_wrong( __FUNCTION__, $exception->getMessage(), RFD_AUCTEENO_VERSION );
+		}
 
-		$date_start_timezone = acn_get_catalog_promoted_date( $post );
-		$date_end_timezone   = '';
+		$datetime_start          = rfd_string_to_datetime( $catalog->get_datetime_start() )->format( 'Y-m-d\TH:i:s' );
+		$datetime_start_timezone = $catalog->get_datetime_start_timezone();
+		$datetime_end            = rfd_string_to_datetime( $catalog->get_datetime_end() )->format( 'Y-m-d\TH:i:s' );
+		$datetime_end_timezone   = $catalog->get_datetime_end_timezone();
+		$datetime_promoted       = rfd_string_to_datetime( $catalog->get_datetime_promoted() )->format( 'Y-m-d\TH:i:s' );
 
 		View::render_template(
 			'admin/meta-boxes/catalog-dates-meta-box.php',
 			compact(
 				'nonce_field',
-				'date_start_timezone',
-				'date_end_timezone'
+				'datetime_promoted',
+				'datetime_start',
+				'datetime_start_timezone',
+				'datetime_end',
+				'datetime_end_timezone'
 			),
 			null,
 			RFD_AUCTEENO_TEMPLATES_DIR
@@ -113,8 +126,16 @@ class Catalog_Dates_Meta_Box extends Post_Meta_Box {
 	 * @param mixed $post Post Object.
 	 *
 	 * @return bool
+	 * @throws Exception Exception.
 	 */
-	public function save( int $post_id, $post ): bool {
+	public function save( int $post_id, $post ): bool { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
+		try {
+			$catalog = acn_get_catalog( $post_id );
+		} catch ( Exception $exception ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			_doing_it_wrong( __FUNCTION__, $exception->getMessage(), RFD_AUCTEENO_VERSION );
+		}
+
 		//phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$date_promoted = sanitize_text_field( wp_unslash( $_POST['date_promoted'] ?? '' ) );
 		//phpcs:ignore WordPress.Security.NonceVerification.Missing
@@ -157,13 +178,15 @@ class Catalog_Dates_Meta_Box extends Post_Meta_Box {
 		$datetime_end_gmt->setTimezone( $zulu_timezone );
 		$datetime_end_gmt = $datetime_end_gmt->format( 'Y-m-d H:i:s' );
 
-		update_post_meta( $post_id, RFD_AUCTEENO_CATALOG_META_DATETIME_PROMOTED, $datetime_promoted );
-		update_post_meta( $post_id, RFD_AUCTEENO_CATALOG_META_DATETIME_START, $datetime_start );
-		update_post_meta( $post_id, RFD_AUCTEENO_CATALOG_META_DATETIME_START_TIMEZONE, $date_start_timezone );
-		update_post_meta( $post_id, RFD_AUCTEENO_CATALOG_META_DATETIME_START_GMT, $datetime_start_gmt );
-		update_post_meta( $post_id, RFD_AUCTEENO_CATALOG_META_DATETIME_END, $datetime_end );
-		update_post_meta( $post_id, RFD_AUCTEENO_CATALOG_META_DATETIME_END_TIMEZONE, $date_end_timezone );
-		update_post_meta( $post_id, RFD_AUCTEENO_CATALOG_META_DATETIME_END_GMT, $datetime_end_gmt );
+		$catalog->set_datetime_start( $datetime_start );
+		$catalog->set_datetime_start_timezone( $datetime_start_timezone->getName() );
+		$catalog->set_datetime_start_gmt( $datetime_start_gmt );
+		$catalog->set_datetime_end( $datetime_end );
+		$catalog->set_datetime_end_timezone( $datetime_end_timezone->getName() );
+		$catalog->set_datetime_end_gmt( $datetime_end_gmt );
+		$catalog->set_datetime_promoted( $datetime_promoted );
+
+		$catalog->save();
 
 		return true;
 	}

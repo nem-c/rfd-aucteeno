@@ -17,6 +17,8 @@ namespace RFD\Aucteeno;
 use RFD\Core\I18n;
 use RFD\Core\Abstracts\Init as Abstract_Init;
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Class Init
  */
@@ -68,8 +70,6 @@ class Init extends Abstract_Init {
 	 * Prepare hooks for both admin and frontend.
 	 */
 	protected function prepare_general(): void {
-		Globals::init();
-
 		$this->add_post_type( 'RFD\Aucteeno\Post_Types\Catalog_Post_Type' );
 		$this->add_post_type( 'RFD\Aucteeno\Post_Types\Listing_Post_Type' );
 	}
@@ -79,5 +79,30 @@ class Init extends Abstract_Init {
 	 */
 	protected function prepare_admin(): void {
 		$this->add_meta_box( 'RFD\Aucteeno\Admin\Meta_Boxes\Catalog_Dates_Meta_Box' );
+	}
+
+	/**
+	 * Register Custom Post Types
+	 */
+	protected function register_post_types(): void {
+		parent::register_post_types();
+		do_action( 'aucteeno_after_register_post_type', $this );
+	}
+
+	/**
+	 * Register Custom Taxonomies
+	 */
+	protected function register_taxonomies(): void {
+		parent::register_taxonomies();
+		do_action( 'aucteeno_after_register_taxonomy', $this );
+	}
+
+	/**
+	 * Run the loader to execute all of the hooks with WordPress.
+	 */
+	public function run(): void {
+		do_action( 'aucteeno_before_init', $this );
+		parent::run();
+		do_action( 'aucteeno_init', $this );
 	}
 }
