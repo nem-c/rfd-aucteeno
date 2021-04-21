@@ -18,7 +18,7 @@ use WP_Post;
 use RFD\Core\Abstracts\Admin\Meta_Boxes\Post_Meta_Box;
 use RFD\Core\View;
 
-defined( 'ABSPATH' ) || exit;
+defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
 /**
  * Class Listing_Dates_Meta_Box

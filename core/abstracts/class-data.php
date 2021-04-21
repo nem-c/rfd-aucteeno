@@ -17,7 +17,7 @@ use RFD\Core\DateTime;
 use DateTimeZone;
 use RFD\Core\Exceptions\Data_Exception;
 
-defined( 'ABSPATH' ) || exit;
+defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
 /**
  * Abstract Data Class

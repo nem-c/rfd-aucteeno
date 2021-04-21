@@ -10,7 +10,7 @@
 
 namespace RFD\Core\Abstracts;
 
-defined( 'ABSPATH' ) || exit;
+defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
 /**
  * Class Block

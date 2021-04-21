@@ -9,7 +9,7 @@
  * @package RFD\Aucteeno
  */
 
-defined( 'ABSPATH' ) || exit;
+defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
 /**
  * Include other function files.

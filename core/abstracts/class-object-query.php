@@ -7,7 +7,7 @@
 
 namespace RFD\Core;
 
-defined( 'ABSPATH' ) || exit;
+defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
 /**
  * Abstract Object Query Class

@@ -14,7 +14,7 @@ use RFD\Core\Loader;
 use RFD\Core\Logger;
 use \WP_Error;
 
-defined( 'ABSPATH' ) || exit;
+defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
 /**
  * Class User_Meta_Box

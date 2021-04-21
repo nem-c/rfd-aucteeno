@@ -5,7 +5,7 @@ namespace RFD\Core\Abstracts;
 use Exception;
 use RFD\Core\Contracts\Object_Data_Store_Interface;
 
-defined( 'ABSPATH' ) || exit;
+defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
 /**
  * Class Data_Store

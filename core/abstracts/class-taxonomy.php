@@ -12,7 +12,7 @@ namespace RFD\Core\Abstracts;
 
 use RFD\Core\Loader;
 
-defined( 'ABSPATH' ) || exit;
+defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
 /**
  * Class Taxonomy

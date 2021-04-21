@@ -11,7 +11,7 @@ namespace RFD\Core;
 use DateTime as PHPDateTime;
 use DateTimeZone;
 
-defined( 'ABSPATH' ) || exit;
+defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
 /**
  * Datetime class.

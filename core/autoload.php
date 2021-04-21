@@ -7,7 +7,7 @@
  * @subpackage RFD\Core\Autoloader
  */
 
-defined( 'ABSPATH' ) || exit;
+defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
 require_once 'constants.php';
 require_once 'functions/functions.php';

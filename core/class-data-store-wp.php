@@ -12,10 +12,9 @@ namespace RFD\Core;
 
 use Exception;
 use RFD\Core\Abstracts\Data;
-use RFD\Core\DateTime;
 use DateTimeZone;
 
-defined( 'ABSPATH' ) || exit;
+defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
 /**
  * Data_Store_WP class.
@@ -82,14 +81,13 @@ class Data_Store_WP {
 	 * @param Data $object Data object.
 	 *
 	 * @return array
-	 * @since  3.0.0
 	 */
 	public function read_meta( Data &$object ): array {
 		global $wpdb;
-		$db_info       = $this->get_db_info();
+		$db_info = $this->get_db_info();
+		// @codingStandardsIgnoreStart
 		$raw_meta_data = $wpdb->get_results(
 			$wpdb->prepare(
-			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				"SELECT {$db_info['meta_id_field']} as meta_id, meta_key, meta_value
 				FROM {$db_info['table']}
 				WHERE {$db_info['object_id_field']} = %d
@@ -98,6 +96,8 @@ class Data_Store_WP {
 				$object->get_id()
 			)
 		);
+
+		// @codingStandardsIgnoreEnd
 
 		return $this->filter_raw_meta_data( $object, $raw_meta_data );
 	}
@@ -111,22 +111,29 @@ class Data_Store_WP {
 	 * @return mixed|void
 	 */
 	public function filter_raw_meta_data( Data &$object, array $raw_meta_data ) {
-		$this->internal_meta_keys = array_merge( array_map( array(
-			$this,
-			'prefix_key'
-		), $object->get_data_keys() ), $this->internal_meta_keys );
-		$meta_data                = array_filter( $raw_meta_data, array( $this, 'exclude_internal_meta_keys' ) );
+		$this->internal_meta_keys = array_merge(
+			array_map(
+				array(
+					$this,
+					'prefix_key',
+				),
+				$object->get_data_keys()
+			),
+			$this->internal_meta_keys
+		);
 
-		return apply_filters( "rfd_data_store_wp_{$this->meta_type}_read_meta", $meta_data, $object, $this );
+		$meta_data = array_filter( $raw_meta_data, array( $this, 'exclude_internal_meta_keys' ) );
+
+		return apply_filters( "rfd_data_store_wp_{$this->meta_type}_read_meta", $meta_data, $object, $this ); // @phpstan-ignore-line
 	}
 
 	/**
 	 * Deletes meta based on meta ID.
 	 *
 	 * @param Data $object Data object.
-	 * @param object $meta (containing at least ->id).
+	 * @param mixed $meta (containing at least ->id).
 	 */
-	public function delete_meta( Data &$object, object $meta ): void {
+	public function delete_meta( Data &$object, $meta ): void {
 		delete_metadata_by_mid( $this->meta_type, $meta->id );
 	}
 
@@ -134,11 +141,11 @@ class Data_Store_WP {
 	 * Add new piece of meta.
 	 *
 	 * @param Data $object Data object.
-	 * @param object $meta (containing ->key and ->value).
+	 * @param mixed $meta (containing ->key and ->value).
 	 *
-	 * @return int meta ID
+	 * @return int|false meta ID
 	 */
-	public function add_meta( Data &$object, object $meta ): int {
+	public function add_meta( Data &$object, $meta ) {
 		return add_metadata(
 			$this->meta_type,
 			$object->get_id(),
@@ -152,9 +159,9 @@ class Data_Store_WP {
 	 * Update meta.
 	 *
 	 * @param Data $object Data object.
-	 * @param object $meta (containing ->id, ->key and ->value).
+	 * @param mixed $meta (containing ->id, ->key and ->value).
 	 */
-	public function update_meta( Data &$object, object $meta ) {
+	public function update_meta( Data &$object, $meta ): void {
 		update_metadata_by_mid( $this->meta_type, $meta->id, $meta->value, $meta->key );
 	}
 
@@ -174,7 +181,8 @@ class Data_Store_WP {
 			$table .= 'woocommerce_';
 		}
 
-		$table           .= $this->meta_type . 'meta';
+		$table .= $this->meta_type . 'meta';
+
 		$object_id_field = $this->meta_type . '_id';
 
 		// Figure out our field names.
@@ -209,7 +217,7 @@ class Data_Store_WP {
 	/**
 	 * Callback to remove unwanted meta data.
 	 *
-	 * @param object $meta Meta object to check if it should be excluded or not.
+	 * @param mixed $meta Meta object to check if it should be excluded or not.
 	 *
 	 * @return bool
 	 */
@@ -257,10 +265,17 @@ class Data_Store_WP {
 	 * @return bool True if updated/deleted.
 	 */
 	protected function update_or_delete_post_meta( Data $object, string $meta_key, $meta_value ): bool {
-		if ( in_array( $meta_value, array(
-				array(),
-				''
-			), true ) && ! in_array( $meta_key, $this->must_exist_meta_keys, true ) ) {
+		if (
+			in_array(
+				$meta_value,
+				array(
+					array(),
+					'',
+				),
+				true
+			) &&
+			false === in_array( $meta_key, $this->must_exist_meta_keys, true )
+		) {
 			$updated = delete_post_meta( $object->get_id(), $meta_key );
 		} else {
 			$updated = update_post_meta( $object->get_id(), $meta_key, $meta_value );
@@ -276,7 +291,7 @@ class Data_Store_WP {
 	 *
 	 * @return array
 	 */
-	protected function get_wp_query_args( array $query_vars ): array {
+	protected function get_wp_query_args( array $query_vars ): array { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded,Generic.Metrics.NestingLevel.MaxExceeded
 
 		$skipped_values = array( '', array(), null );
 		$wp_query_args  = array(
@@ -329,7 +344,7 @@ class Data_Store_WP {
 			}
 		}
 
-		return apply_filters( 'rfd_get_wp_query_args', $wp_query_args, $query_vars );
+		return apply_filters( 'rfd_get_wp_query_args', $wp_query_args, $query_vars ); // @phpstan-ignore-line
 	}
 
 	/**
@@ -342,9 +357,8 @@ class Data_Store_WP {
 	 * @param array $wp_query_args WP_Query args.
 	 *
 	 * @return array Modified $wp_query_args
-	 * @since 3.2.0
 	 */
-	public function parse_date_for_wp_query( $query_var, $key, $wp_query_args = array() ): array {
+	public function parse_date_for_wp_query( $query_var, string $key, $wp_query_args = array() ): array { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded,Generic.Metrics.NestingLevel.MaxExceeded
 		$query_parse_regex = '/([^.<>]*)(>=|<=|>|<|\.\.\.)([^.<>]+)/';
 		$valid_operators   = array( '>', '>=', '=', '<=', '<', '...' );
 
@@ -522,7 +536,7 @@ class Data_Store_WP {
 	 *
 	 * @return array Terms that are not stopwords.
 	 */
-	protected function get_valid_search_terms( array $terms ): array {
+	protected function get_valid_search_terms( array $terms ): array { //phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
 		$valid_terms = array();
 		$stopwords   = $this->get_search_stopwords();
 
@@ -557,7 +571,7 @@ class Data_Store_WP {
 	protected function get_search_stopwords(): array {
 		// Translators: This is a comma-separated list of very common words that should be excluded from a search, like a, an, and the. These are usually called "stopwords". You should not simply translate these individual words into your language. Instead, look for and provide commonly accepted stopwords in your language.
 		$stopwords = array_map(
-			'wc_strtolower',
+			'rfd_strtolower',
 			array_map(
 				'trim',
 				explode(
@@ -592,7 +606,6 @@ class Data_Store_WP {
 	 * @param string $table Lookup table name.
 	 *
 	 * @return string
-	 * @since 3.6.0
 	 */
 	protected function get_primary_key_for_lookup_table( string $table ): string {
 		return '';
@@ -603,27 +616,27 @@ class Data_Store_WP {
 	 *
 	 * @param int $id ID of object to update.
 	 * @param string $table Lookup table name.
-	 *
-	 * @return NULL
 	 */
-	protected function update_lookup_table( int $id, string $table ): ?bool {
+	protected function update_lookup_table( int $id, string $table ): void {
 		global $wpdb;
 
 		$id    = absint( $id );
 		$table = sanitize_key( $table );
 
 		if ( empty( $id ) || empty( $table ) ) {
-			return false;
+			return;
 		}
 
 		$existing_data = wp_cache_get( 'lookup_table', 'object_' . $id );
 		$update_data   = $this->get_data_for_lookup_table( $id, $table );
 
 		if ( ! empty( $update_data ) && $update_data !== $existing_data ) {
+			// @codingStandardsIgnoreStart
 			$wpdb->replace(
 				$wpdb->$table,
 				$update_data
 			);
+			// @codingStandardsIgnoreEnd
 			wp_cache_set( 'lookup_table', $update_data, 'object_' . $id );
 		}
 	}
@@ -634,24 +647,26 @@ class Data_Store_WP {
 	 * @param int $id ID of object to update.
 	 * @param string $table Lookup table name.
 	 */
-	public function delete_from_lookup_table( int $id, string $table ): bool {
+	public function delete_from_lookup_table( int $id, string $table ): void {
 		global $wpdb;
 
 		$id    = absint( $id );
 		$table = sanitize_key( $table );
 
 		if ( empty( $id ) || empty( $table ) ) {
-			return false;
+			return;
 		}
 
 		$pk = $this->get_primary_key_for_lookup_table( $table );
 
+		// @codingStandardsIgnoreStart
 		$wpdb->delete(
 			$wpdb->$table,
 			array(
 				$pk => $id,
 			)
 		);
+		// @codingStandardsIgnoreEnd
 		wp_cache_delete( 'lookup_table', 'object_' . $id );
 	}
 

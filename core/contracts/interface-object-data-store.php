@@ -10,7 +10,7 @@ namespace RFD\Core\Contracts;
 
 use RFD\Core\Abstracts\Data;
 
-defined( 'ABSPATH' ) || exit;
+defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
 /**
  * WC Data Store Interface
@@ -72,9 +72,9 @@ interface Object_Data_Store_Interface {
 	 * @param Data $object Data object.
 	 * @param object $meta Meta object (containing ->key and ->value).
 	 *
-	 * @return int meta ID
+	 * @return int|false meta ID
 	 */
-	public function add_meta( Data &$object, object $meta ): int;
+	public function add_meta( Data &$object, object $meta );
 
 	/**
 	 * Update meta.

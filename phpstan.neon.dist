@@ -16,6 +16,10 @@ parameters:
     - vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
     - core/constants.php
     - core/abstracts/class-init.php
+    - core/abstracts/class-post-type.php
+    - core/abstracts/class-data.php
+    - core/abstracts/class-data-store.php
+    - core/abstracts/class-object-query.php
     - core/class-enqueue.php
     - core/class-i18n.php
     - core/class-loader.php
@@ -24,5 +28,13 @@ parameters:
     - core/admin/class-settings.php
     - core/class-input.php
     - core/class-view.php
-    - rfd-aucteeno.php
+    - core/class-data-store-wp.php
+    - core/class-datetime.php
+    - core/contracts/interface-object-data-store.php
     - includes/class-init.php
+    - includes/post_types/class-catalog-post-type.php
+    - includes/post_types/class-listing-post-type.php
+    - includes/data_stores/class-catalog-data-store-cpt.php
+    - includes/queries/class-catalog-query.php
+    - includes/class-catalog.php
+    - rfd-aucteeno.php

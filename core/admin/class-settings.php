@@ -13,7 +13,7 @@ namespace RFD\Core\Admin;
 use RFD\Core\Input;
 use RFD\Core\Loader;
 
-defined( 'ABSPATH' ) || exit;
+defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
 /**
  * Class Settings

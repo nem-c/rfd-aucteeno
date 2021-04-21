@@ -9,7 +9,7 @@ namespace RFD\Aucteeno\Data_Stores;
 
 use RFD\Core\Abstracts\Data_Store as Abstract_Data_Store;
 
-defined( 'ABSPATH' ) || exit;
+defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
 /**
  * Data store class.

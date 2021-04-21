@@ -5,7 +5,7 @@
  * @package RFD\Aucteeno
  */
 
-defined( 'ABSPATH' ) || exit;
+defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
 if ( false === function_exists( 'wp_datetime_string_to_zulu' ) ) {
 	/**

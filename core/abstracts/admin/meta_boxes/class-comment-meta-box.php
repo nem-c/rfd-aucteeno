@@ -15,7 +15,7 @@ use RFD\Core\Logger;
 use \WP_Error;
 use \WP_Comment;
 
-defined( 'ABSPATH' ) || exit;
+defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
 /**
  * Class Comment_Meta_Box

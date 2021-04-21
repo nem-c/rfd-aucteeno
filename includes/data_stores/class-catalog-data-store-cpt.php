@@ -76,8 +76,8 @@ class Catalog_Data_Store_Cpt extends Data_Store_WP implements Object_Data_Store_
 	 *
 	 * @param Catalog $object Catalog object.
 	 */
-	public function create( &$object ) {
-		if ( ! $object->get_date_created( 'edit' ) ) {
+	public function create( &$object ): void {
+		if ( true === empty( $object->get_date_created( 'edit' ) ) ) {
 			$object->set_date_created( time() );
 		}
 
@@ -124,11 +124,15 @@ class Catalog_Data_Store_Cpt extends Data_Store_WP implements Object_Data_Store_
 	 *
 	 * @throws Exception Exception.
 	 */
-	public function read( &$object ) {
+	public function read( &$object ): void {
 		$object->set_defaults();
 		$post_object = get_post( $object->get_id() );
 
-		if ( true === empty( $object->get_id() ) || false === $post_object || 'catalog' !== $post_object->post_type ) {
+		if ( true === empty( $object->get_id() ) || true === empty( $post_object ) ) {
+			throw new Exception( __( 'Invalid product.', 'rfd-aucteeno' ) );
+		}
+
+		if ( 'catalog' !== $post_object->post_type ) {
 			throw new Exception( __( 'Invalid product.', 'rfd-aucteeno' ) );
 		}
 
@@ -159,7 +163,7 @@ class Catalog_Data_Store_Cpt extends Data_Store_WP implements Object_Data_Store_
 	 *
 	 * @param Catalog $object Catalog Object.
 	 */
-	public function update( &$object ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
+	public function update( &$object ): void { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
 		$object->save_meta_data();
 		$changes = $object->get_changes();
 
@@ -300,7 +304,7 @@ class Catalog_Data_Store_Cpt extends Data_Store_WP implements Object_Data_Store_
 	 *
 	 * @since 3.0.0
 	 */
-	protected function read_catalog_data( Catalog &$object ) {
+	protected function read_catalog_data( Catalog &$object ): void {
 		$id               = $object->get_id();
 		$post_meta_values = get_post_meta( $id );
 		// @codingStandardsIgnoreStart
@@ -322,9 +326,12 @@ class Catalog_Data_Store_Cpt extends Data_Store_WP implements Object_Data_Store_
 			$set_props[ $prop ] = maybe_unserialize( $meta_value ); // get_post_meta only unserializes single values.
 		}
 
-//		$set_props['category_ids']      = $this->get_term_ids( $product, 'product_cat' );
-//		$set_props['tag_ids']           = $this->get_term_ids( $product, 'product_tag' );
-//		$set_props['gallery_image_ids'] = array_filter( explode( ',', $set_props['gallery_image_ids'] ) );
+		/**
+		 * TODO:
+		 * $set_props['category_ids']      = $this->get_term_ids( $product, 'product_cat' );
+		 * $set_props['tag_ids']           = $this->get_term_ids( $product, 'product_tag' );
+		 * $set_props['gallery_image_ids'] = array_filter( explode( ',', $set_props['gallery_image_ids'] ) );
+		 */
 
 		$object->set_props( $set_props );
 	}
@@ -334,10 +341,8 @@ class Catalog_Data_Store_Cpt extends Data_Store_WP implements Object_Data_Store_
 	 * Read extra data associated with the catalog.
 	 *
 	 * @param Catalog $object Product object.
-	 *
-	 * @since 3.0.0
 	 */
-	protected function read_extra_data( &$object ) {
+	protected function read_extra_data( Catalog &$object ): void {
 		foreach ( $object->get_extra_data_keys() as $key ) {
 			$function = 'set_' . $key;
 			if ( is_callable( array( $object, $function ) ) ) {
@@ -352,7 +357,7 @@ class Catalog_Data_Store_Cpt extends Data_Store_WP implements Object_Data_Store_
 	 * @param Catalog $object Product object.
 	 * @param bool $force Force update. Used during create.
 	 */
-	protected function update_post_meta( Catalog &$object, $force = false ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded,Generic.Metrics.NestingLevel.MaxExceeded
+	protected function update_post_meta( Catalog &$object, $force = false ): void { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded,Generic.Metrics.NestingLevel.MaxExceeded
 		// @codingStandardsIgnoreStart
 		$meta_key_to_props = array(
 			RFD_AUCTEENO_CATALOG_META_DATETIME_PROMOTED       => 'datetime_promoted',
@@ -432,7 +437,7 @@ class Catalog_Data_Store_Cpt extends Data_Store_WP implements Object_Data_Store_
 	 *
 	 * @param Catalog $catalog Product object.
 	 */
-	protected function clear_caches( Catalog &$catalog ) {
+	protected function clear_caches( Catalog &$catalog ): void {
 		/* TODO */
 	}
 }

@@ -12,7 +12,7 @@ namespace RFD\Core\Exceptions;
 
 use Exception;
 
-defined( 'ABSPATH' ) || exit;
+defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
 /**
  * Data exception class.

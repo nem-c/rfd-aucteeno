@@ -11,7 +11,7 @@
 use RFD\Aucteeno\Data_Stores\Data_Store;
 use RFD\Aucteeno\Catalog;
 
-defined( 'ABSPATH' ) || exit;
+defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
 /**
  * Standard way of retrieving catalogs based on certain parameters.
@@ -59,7 +59,7 @@ function acn_get_catalogs( array $args ) {
 		}
 	}
 
-	return Data_Store::load( 'catalog' )->get_catalogs( $args );
+	return Data_Store::load( 'catalog' )->get_catalogs( $args ); // @phpstan-ignore-line
 }
 
 /**
@@ -70,7 +70,7 @@ function acn_get_catalogs( array $args ) {
  *
  * @param mixed $the_catalog Catalog object or post ID of the catalog.
  *
- * @return Catalog|null|false
+ * @return Catalog|false
  * @throws Exception Exception.
  */
 function acn_get_catalog( $the_catalog = false ) {

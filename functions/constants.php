@@ -5,7 +5,7 @@
  * @package RFD\Aucteeno
  */
 
-defined( 'ABSPATH' ) || exit;
+defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
 const RFD_AUCTEENO_PLUGIN_PREFIX = '_acn_';
 
