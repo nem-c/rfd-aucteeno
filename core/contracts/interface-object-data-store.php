@@ -23,21 +23,21 @@ interface Object_Data_Store_Interface {
 	 *
 	 * @param Data $object Data object.
 	 */
-	public function create( Data &$object );
+	public function create( Data &$object ): void;
 
 	/**
 	 * Method to read a record. Creates a new Data based object.
 	 *
 	 * @param Data $object Data object.
 	 */
-	public function read( Data &$object );
+	public function read( Data &$object ): void;
 
 	/**
 	 * Updates a record in the database.
 	 *
 	 * @param Data $object Data object.
 	 */
-	public function update( Data &$object );
+	public function update( Data &$object ): void;
 
 	/**
 	 * Deletes a record from the database.
@@ -82,5 +82,5 @@ interface Object_Data_Store_Interface {
 	 * @param Data $object Data object.
 	 * @param object $meta Meta object (containing ->id, ->key and ->value).
 	 */
-	public function update_meta( Data &$object, object $meta );
+	public function update_meta( Data &$object, object $meta ): void;
 }

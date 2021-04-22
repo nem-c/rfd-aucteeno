@@ -18,7 +18,7 @@
 
 namespace RFD\Aucteeno;
 
-defined( 'ABSPATH' ) || exit;
+defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
 /**
  * Current plugin version.

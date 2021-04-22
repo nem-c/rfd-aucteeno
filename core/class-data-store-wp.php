@@ -13,6 +13,7 @@ namespace RFD\Core;
 use Exception;
 use RFD\Core\Abstracts\Data;
 use DateTimeZone;
+use RFD\Core\DateTime;
 
 defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
@@ -426,9 +427,9 @@ class Data_Store_WP {
 					 *
 					 * @see https://core.trac.wordpress.org/ticket/29908
 					 */
-					$query_arg[ $comparison ]['year']  = $dates[ $index ]->date( 'Y' );
-					$query_arg[ $comparison ]['month'] = $dates[ $index ]->date( 'n' );
-					$query_arg[ $comparison ]['day']   = $dates[ $index ]->date( 'j' );
+					$query_arg[ $comparison ]['year']  = $dates[ $index ]->format( 'Y' );
+					$query_arg[ $comparison ]['month'] = $dates[ $index ]->format( 'n' );
+					$query_arg[ $comparison ]['day']   = $dates[ $index ]->format( 'j' );
 				} else {
 					/**
 					 * WordPress doesn't support 'hour'/'second'/'minute' in array format 'before'/'after' queries,
@@ -439,13 +440,13 @@ class Data_Store_WP {
 			}
 
 			if ( empty( $comparisons ) ) {
-				$query_arg['year']  = $dates[0]->date( 'Y' );
-				$query_arg['month'] = $dates[0]->date( 'n' );
-				$query_arg['day']   = $dates[0]->date( 'j' );
+				$query_arg['year']  = $dates[0]->format( 'Y' );
+				$query_arg['month'] = $dates[0]->format( 'n' );
+				$query_arg['day']   = $dates[0]->format( 'j' );
 				if ( 'second' === $precision ) {
-					$query_arg['hour']   = $dates[0]->date( 'H' );
-					$query_arg['minute'] = $dates[0]->date( 'i' );
-					$query_arg['second'] = $dates[0]->date( 's' );
+					$query_arg['hour']   = $dates[0]->format( 'H' );
+					$query_arg['minute'] = $dates[0]->format( 'i' );
+					$query_arg['second'] = $dates[0]->format( 's' );
 				}
 			}
 			$wp_query_args['date_query'][] = $query_arg;
@@ -461,8 +462,8 @@ class Data_Store_WP {
 		// Meta dates are stored as timestamps in the db.
 		// Check against beginning/end-of-day timestamps when using 'day' precision.
 		if ( 'day' === $precision ) {
-			$start_timestamp = strtotime( gmdate( 'm/d/Y 00:00:00', $dates[0]->get_timestamp() ) );
-			$end_timestamp   = '...' !== $operator ? ( $start_timestamp + DAY_IN_SECONDS ) : strtotime( gmdate( 'm/d/Y 00:00:00', $dates[1]->get_timestamp() ) );
+			$start_timestamp = strtotime( gmdate( 'm/d/Y 00:00:00', $dates[0]->get_timestamp() ) ); // @phpstan-ignore-line
+			$end_timestamp   = '...' !== $operator ? ( $start_timestamp + DAY_IN_SECONDS ) : strtotime( gmdate( 'm/d/Y 00:00:00', $dates[1]->get_timestamp() ) ); // @phpstan-ignore-line
 			switch ( $operator ) {
 				case '>':
 				case '<=':
@@ -496,18 +497,18 @@ class Data_Store_WP {
 			if ( '...' !== $operator ) {
 				$wp_query_args['meta_query'][] = array(
 					'key'     => $key,
-					'value'   => $dates[0]->get_timestamp(),
+					'value'   => $dates[0]->get_timestamp(), // @phpstan-ignore-line
 					'compare' => $operator,
 				);
 			} else {
 				$wp_query_args['meta_query'][] = array(
 					'key'     => $key,
-					'value'   => $dates[0]->get_timestamp(),
+					'value'   => $dates[0]->get_timestamp(), // @phpstan-ignore-line
 					'compare' => '>=',
 				);
 				$wp_query_args['meta_query'][] = array(
 					'key'     => $key,
-					'value'   => $dates[1]->get_timestamp(),
+					'value'   => $dates[1]->get_timestamp(), // @phpstan-ignore-line
 					'compare' => '<=',
 				);
 			}

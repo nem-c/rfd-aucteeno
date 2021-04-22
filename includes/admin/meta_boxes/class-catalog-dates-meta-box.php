@@ -12,7 +12,7 @@
 namespace RFD\Aucteeno\Admin\Meta_Boxes;
 
 use DateTimeZone;
-use DateTime;
+use RFD\Core\DateTime;
 use Exception;
 use WP_Post;
 use RFD\Core\Abstracts\Admin\Meta_Boxes\Post_Meta_Box;
@@ -96,13 +96,25 @@ class Catalog_Dates_Meta_Box extends Post_Meta_Box {
 		} catch ( Exception $exception ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			_doing_it_wrong( __FUNCTION__, $exception->getMessage(), RFD_AUCTEENO_VERSION );
+			exit( 1 );
 		}
 
-		$datetime_start          = rfd_string_to_datetime( $catalog->get_datetime_start() )->format( 'Y-m-d\TH:i:s' );
-		$datetime_start_timezone = $catalog->get_datetime_start_timezone();
-		$datetime_end            = rfd_string_to_datetime( $catalog->get_datetime_end() )->format( 'Y-m-d\TH:i:s' );
-		$datetime_end_timezone   = $catalog->get_datetime_end_timezone();
-		$datetime_promoted       = rfd_string_to_datetime( $catalog->get_datetime_promoted() )->format( 'Y-m-d\TH:i:s' );
+		if ( true === empty( $catalog ) ) {
+			$datetime_start          = '';
+			$datetime_start_timezone = '';
+			$datetime_end            = '';
+			$datetime_end_timezone   = '';
+			$datetime_promoted       = '';
+		} else {
+			// @phpstan-ignore-next-line
+			$datetime_start          = rfd_string_to_datetime( $catalog->get_datetime_start() )->format( 'Y-m-d\TH:i:s' );
+			$datetime_start_timezone = $catalog->get_datetime_start_timezone();
+			// @phpstan-ignore-next-line
+			$datetime_end          = rfd_string_to_datetime( $catalog->get_datetime_end() )->format( 'Y-m-d\TH:i:s' );
+			$datetime_end_timezone = $catalog->get_datetime_end_timezone();
+			// @phpstan-ignore-next-line
+			$datetime_promoted = rfd_string_to_datetime( $catalog->get_datetime_promoted() )->format( 'Y-m-d\TH:i:s' );
+		}
 
 		View::render_template(
 			'admin/meta-boxes/catalog-dates-meta-box.php',
@@ -114,7 +126,7 @@ class Catalog_Dates_Meta_Box extends Post_Meta_Box {
 				'datetime_end',
 				'datetime_end_timezone'
 			),
-			null,
+			'',
 			RFD_AUCTEENO_TEMPLATES_DIR
 		);
 	}
@@ -128,12 +140,13 @@ class Catalog_Dates_Meta_Box extends Post_Meta_Box {
 	 * @return bool
 	 * @throws Exception Exception.
 	 */
-	public function save( int $post_id, $post ): bool { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
+	public function save( int $post_id, $post ): bool { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh,Generic.Metrics.CyclomaticComplexity.MaxExceeded
 		try {
 			$catalog = acn_get_catalog( $post_id );
 		} catch ( Exception $exception ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			_doing_it_wrong( __FUNCTION__, $exception->getMessage(), RFD_AUCTEENO_VERSION );
+			exit( 1 );
 		}
 
 		//phpcs:ignore WordPress.Security.NonceVerification.Missing
@@ -178,15 +191,17 @@ class Catalog_Dates_Meta_Box extends Post_Meta_Box {
 		$datetime_end_gmt->setTimezone( $zulu_timezone );
 		$datetime_end_gmt = $datetime_end_gmt->format( 'Y-m-d H:i:s' );
 
-		$catalog->set_datetime_start( $datetime_start );
-		$catalog->set_datetime_start_timezone( $datetime_start_timezone->getName() );
-		$catalog->set_datetime_start_gmt( $datetime_start_gmt );
-		$catalog->set_datetime_end( $datetime_end );
-		$catalog->set_datetime_end_timezone( $datetime_end_timezone->getName() );
-		$catalog->set_datetime_end_gmt( $datetime_end_gmt );
-		$catalog->set_datetime_promoted( $datetime_promoted );
+		if ( false === empty( $catalog ) ) {
+			$catalog->set_datetime_start( $datetime_start );
+			$catalog->set_datetime_start_timezone( $datetime_start_timezone->getName() );
+			$catalog->set_datetime_start_gmt( $datetime_start_gmt );
+			$catalog->set_datetime_end( $datetime_end );
+			$catalog->set_datetime_end_timezone( $datetime_end_timezone->getName() );
+			$catalog->set_datetime_end_gmt( $datetime_end_gmt );
+			$catalog->set_datetime_promoted( $datetime_promoted );
 
-		$catalog->save();
+			$catalog->save();
+		}
 
 		return true;
 	}

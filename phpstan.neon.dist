@@ -20,6 +20,7 @@ parameters:
     - core/abstracts/class-data.php
     - core/abstracts/class-data-store.php
     - core/abstracts/class-object-query.php
+    - core/abstracts/admin/meta_boxes/class-post-meta-box.php
     - core/class-enqueue.php
     - core/class-i18n.php
     - core/class-loader.php
@@ -31,9 +32,11 @@ parameters:
     - core/class-data-store-wp.php
     - core/class-datetime.php
     - core/contracts/interface-object-data-store.php
+    - core/exceptions/class-data-exception.php
     - includes/class-init.php
     - includes/post_types/class-catalog-post-type.php
     - includes/post_types/class-listing-post-type.php
+    - includes/data_stores/class-data-store.php
     - includes/data_stores/class-catalog-data-store-cpt.php
     - includes/queries/class-catalog-query.php
     - includes/class-catalog.php

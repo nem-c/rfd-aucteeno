@@ -17,7 +17,7 @@ namespace RFD\Aucteeno;
 use RFD\Core\I18n;
 use RFD\Core\Abstracts\Init as Abstract_Init;
 
-defined( 'ABSPATH' ) || exit;
+defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
 /**
  * Class Init

@@ -14,7 +14,7 @@ use Exception;
 use RFD\Core\Object_Query;
 use RFD\Aucteeno\Data_Stores\Data_Store;
 
-defined( 'ABSPATH' ) || exit;
+defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
 /**
  * Class Catalog_Query
@@ -44,13 +44,13 @@ class Catalog_Query extends Object_Query {
 	/**
 	 * Get products matching the current query vars.
 	 *
-	 * @return array|object of WC_Product objects
+	 * @return array|mixed of WC_Product objects
 	 * @throws Exception Exception.
 	 */
-	public function get_catalogs(): array {
+	public function get_catalogs() {
 		$args    = apply_filters( 'aucteeno_catalog_object_query_args', $this->get_query_vars() );
-		$results = Data_Store::load( 'catalog' )->query( $args );
+		$results = Data_Store::load( 'catalog' )->query( $args ); // @phpstan-ignore-line
 
-		return apply_filters( 'aucteeno_product_object_query', $results, $args );
+		return apply_filters( 'aucteeno_product_object_query', $results, $args ); // @phpstan-ignore-line
 	}
 }

@@ -13,7 +13,7 @@ namespace RFD\Aucteeno\Post_Types;
 
 use RFD\Core\Abstracts\Post_Type;
 
-defined( 'ABSPATH' ) || exit;
+defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
 /**
  * Class Listing_Post_Type

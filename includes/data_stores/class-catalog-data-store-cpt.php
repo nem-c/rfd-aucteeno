@@ -9,6 +9,8 @@ use RFD\Core\Contracts\Object_Data_Store_Interface;
 use RFD\Aucteeno\Queries\Catalog_Query;
 use RFD\Core\DateTime;
 
+defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
+
 /**
  * Class Catalog_Data_Store_Cpt
  */
@@ -196,11 +198,11 @@ class Catalog_Data_Store_Cpt extends Data_Store_WP implements Object_Data_Store_
 				'post_name'      => $object->get_slug( 'edit' ),
 				'post_type'      => 'product',
 			);
-			if ( $object->get_date_created( 'edit' ) ) {
+			if ( false === empty( $object->get_date_created( 'edit' ) ) ) {
 				$post_data['post_date']     = gmdate( 'Y-m-d H:i:s', $object->get_date_created( 'edit' )->get_offset_timestamp() );
 				$post_data['post_date_gmt'] = gmdate( 'Y-m-d H:i:s', $object->get_date_created( 'edit' )->get_timestamp() );
 			}
-			if ( isset( $changes['date_modified'] ) && $object->get_date_modified( 'edit' ) ) {
+			if ( isset( $changes['date_modified'] ) && false === empty( $object->get_date_modified( 'edit' ) ) ) {
 				$post_data['post_modified']     = gmdate( 'Y-m-d H:i:s', $object->get_date_modified( 'edit' )->get_offset_timestamp() );
 				$post_data['post_modified_gmt'] = gmdate( 'Y-m-d H:i:s', $object->get_date_modified( 'edit' )->get_timestamp() );
 			} else {

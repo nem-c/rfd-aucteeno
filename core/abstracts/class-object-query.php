@@ -63,7 +63,7 @@ abstract class Object_Query {
 	 * @param string $query_var Query variable to set.
 	 * @param mixed $value Value to set for query variable.
 	 */
-	public function set( string $query_var, $value ) {
+	public function set( string $query_var, $value ): void {
 		$this->query_vars[ $query_var ] = $value;
 	}
 

@@ -12,7 +12,7 @@
  * @codingStandardsIgnoreFile
  */
 
-defined( 'ABSPATH' ) || exit;
+defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
 ?>
     <div class="components-base-control__field rfd_aucteeno_date_promoted__field">

@@ -67,13 +67,13 @@ abstract class Data_Store {
 					throw new Exception( __( 'Invalid data store.', 'rfd-core' ) );
 				}
 				$this->current_class_name = get_class( $store );
-				$this->instance           = $store;
+				$this->instance           = $store; // @phpstan-ignore-line
 			} else {
 				if ( false === class_exists( $store ) ) {
 					throw new Exception( __( 'Invalid data store.', 'rfd-core' ) );
 				}
 				$this->current_class_name = $store;
-				$this->instance           = new $store();
+				$this->instance           = new $store(); // @phpstan-ignore-line
 			}
 		} else {
 			throw new Exception( __( 'Invalid data store.', 'rfd-core' ) );
@@ -107,7 +107,7 @@ abstract class Data_Store {
 	 * @throws Exception When validation fails.
 	 */
 	public static function load( string $object_type ): Data_Store {
-		return new static( $object_type );
+		return new static( $object_type ); // @phpstan-ignore-line
 	}
 
 	/**
@@ -123,10 +123,8 @@ abstract class Data_Store {
 	 * Reads an object from the data store.
 	 *
 	 * @param Data $object Data instance.
-	 *
-	 * @since 3.0.0
 	 */
-	public function read( Data &$object ) {
+	public function read( Data &$object ): void {
 		$this->instance->read( $object );
 	}
 
@@ -134,10 +132,8 @@ abstract class Data_Store {
 	 * Create an object in the data store.
 	 *
 	 * @param Data $object Data instance.
-	 *
-	 * @since 3.0.0
 	 */
-	public function create( Data &$object ) {
+	public function create( Data &$object ): void {
 		$this->instance->create( $object );
 	}
 
@@ -146,7 +142,7 @@ abstract class Data_Store {
 	 *
 	 * @param Data $object Data instance.
 	 */
-	public function update( Data &$object ) {
+	public function update( Data &$object ): void {
 		$this->instance->update( $object );
 	}
 
@@ -156,7 +152,7 @@ abstract class Data_Store {
 	 * @param Data $object Data instance.
 	 * @param array $args Array of args to pass to the delete method.
 	 */
-	public function delete( Data &$object, $args = array() ) {
+	public function delete( Data &$object, $args = array() ): void {
 		$this->instance->delete( $object, $args );
 	}
 
@@ -173,11 +169,10 @@ abstract class Data_Store {
 		if ( false === is_callable( array( $this->instance, $method ) ) ) {
 			return;
 		}
-		if ( is_callable( array( $this->instance, $method ) ) ) {
-			$object     = array_shift( $parameters );
-			$parameters = array_merge( array( &$object ), $parameters );
 
-			return $this->instance->$method( ...$parameters );
-		}
+		$object     = array_shift( $parameters );
+		$parameters = array_merge( array( &$object ), $parameters );
+
+		return $this->instance->$method( ...$parameters );
 	}
 }

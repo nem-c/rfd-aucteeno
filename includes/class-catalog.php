@@ -16,7 +16,7 @@ use RFD\Core\DateTime;
 use RFD\Core\Abstracts\Data;
 use RFD\Aucteeno\Data_Stores\Data_Store;
 
-defined( 'ABSPATH' ) || exit;
+defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
 /**
  * Class Catalog
@@ -82,8 +82,8 @@ class Catalog extends Data {
 			$this->set_id( $catalog );
 		} elseif ( $catalog instanceof self ) {
 			$this->set_id( absint( $catalog->get_id() ) );
-		} elseif ( false === empty( $product->ID ) ) {
-			$this->set_id( absint( $product->ID ) );
+		} elseif ( false === empty( $catalog->ID ) ) {
+			$this->set_id( absint( $catalog->ID ) );
 		} else {
 			$this->set_object_read( true );
 		}
@@ -106,15 +106,15 @@ class Catalog extends Data {
 	 * @return string
 	 */
 	public function get_title(): string {
-		return apply_filters( 'aucteeno_product_title', $this->get_name(), $this );
+		return apply_filters( 'aucteeno_product_title', $this->get_name(), $this ); // @phpstan-ignore-line
 	}
 
 	/**
 	 * Product permalink.
 	 *
-	 * @return string
+	 * @return string|false
 	 */
-	public function get_permalink(): string {
+	public function get_permalink() {
 		return get_permalink( $this->get_id() );
 	}
 
@@ -154,10 +154,15 @@ class Catalog extends Data {
 	 *
 	 * @param string $context What the value is for. Valid values are view and edit.
 	 *
-	 * @return DateTime|null object if the date is set or null if there is no date.
+	 * @return DateTime object if the date is set or null if there is no date.
 	 */
 	public function get_date_created( $context = 'view' ): DateTime {
-		return $this->get_prop( 'date_created', $context );
+		$date_created = $this->get_prop( 'date_created', $context );
+		if ( true === empty( $date_created ) ) {
+			$date_created = new DateTime();
+		}
+
+		return $date_created;
 	}
 
 	/**
@@ -167,7 +172,7 @@ class Catalog extends Data {
 	 *
 	 * @return DateTime|null object if the date is set or null if there is no date.
 	 */
-	public function get_date_modified( $context = 'view' ): DateTime {
+	public function get_date_modified( $context = 'view' ): ?DateTime {
 		return $this->get_prop( 'date_modified', $context );
 	}
 
@@ -373,7 +378,7 @@ class Catalog extends Data {
 	 *
 	 * @param string $name Product name.
 	 */
-	public function set_name( string $name ) {
+	public function set_name( string $name ): void {
 		$this->set_prop( 'name', $name );
 	}
 
@@ -382,7 +387,7 @@ class Catalog extends Data {
 	 *
 	 * @param string $slug Product slug.
 	 */
-	public function set_slug( string $slug ) {
+	public function set_slug( string $slug ): void {
 		$this->set_prop( 'slug', $slug );
 	}
 
@@ -391,7 +396,7 @@ class Catalog extends Data {
 	 *
 	 * @param string|integer|null $date UTC timestamp, or ISO 8601 DateTime. If the DateTime string has no timezone or offset, WordPress site timezone will be assumed. Null if their is no date.
 	 */
-	public function set_date_created( $date = null ) {
+	public function set_date_created( $date = null ): void {
 		$this->set_date_prop( 'date_created', $date );
 	}
 
@@ -400,7 +405,7 @@ class Catalog extends Data {
 	 *
 	 * @param string|integer|null $date UTC timestamp, or ISO 8601 DateTime. If the DateTime string has no timezone or offset, WordPress site timezone will be assumed. Null if their is no date.
 	 */
-	public function set_date_modified( $date = null ) {
+	public function set_date_modified( $date = null ): void {
 		$this->set_date_prop( 'date_modified', $date );
 	}
 
@@ -409,7 +414,7 @@ class Catalog extends Data {
 	 *
 	 * @param string $status Product status.
 	 */
-	public function set_status( string $status ) {
+	public function set_status( string $status ): void {
 		$this->set_prop( 'status', $status );
 	}
 
@@ -418,7 +423,7 @@ class Catalog extends Data {
 	 *
 	 * @param bool|string $featured Whether the product is featured or not.
 	 */
-	public function set_featured( $featured ) {
+	public function set_featured( $featured ): void {
 		$this->set_prop( 'featured', rfd_string_to_bool( $featured ) );
 	}
 
@@ -427,7 +432,7 @@ class Catalog extends Data {
 	 *
 	 * @param string $datetime_start Start date time string.
 	 */
-	public function set_datetime_start( string $datetime_start ) {
+	public function set_datetime_start( string $datetime_start ): void {
 		$this->set_date_prop( 'datetime_start', $datetime_start );
 	}
 
@@ -436,7 +441,7 @@ class Catalog extends Data {
 	 *
 	 * @param string $datetime_start_gmt Start date time GMT string.
 	 */
-	public function set_datetime_start_gmt( string $datetime_start_gmt ) {
+	public function set_datetime_start_gmt( string $datetime_start_gmt ): void {
 		$this->set_date_prop( 'datetime_start_gmt', $datetime_start_gmt );
 	}
 
@@ -445,7 +450,7 @@ class Catalog extends Data {
 	 *
 	 * @param string $datetime_start_timezone Start date timezone string.
 	 */
-	public function set_datetime_start_timezone( string $datetime_start_timezone ) {
+	public function set_datetime_start_timezone( string $datetime_start_timezone ): void {
 		$this->set_prop( 'datetime_start_timezone', $datetime_start_timezone );
 	}
 
@@ -454,7 +459,7 @@ class Catalog extends Data {
 	 *
 	 * @param string $datetime_end End date time string.
 	 */
-	public function set_datetime_end( string $datetime_end ) {
+	public function set_datetime_end( string $datetime_end ): void {
 		$this->set_date_prop( 'datetime_end', $datetime_end );
 	}
 
@@ -463,7 +468,7 @@ class Catalog extends Data {
 	 *
 	 * @param string $datetime_end_gmt End date time GMT string.
 	 */
-	public function set_datetime_end_gmt( string $datetime_end_gmt ) {
+	public function set_datetime_end_gmt( string $datetime_end_gmt ): void {
 		$this->set_date_prop( 'datetime_end_gmt', $datetime_end_gmt );
 	}
 
@@ -472,7 +477,7 @@ class Catalog extends Data {
 	 *
 	 * @param string $datetime_end_timezone End date timezone string.
 	 */
-	public function set_datetime_end_timezone( string $datetime_end_timezone ) {
+	public function set_datetime_end_timezone( string $datetime_end_timezone ): void {
 		$this->set_prop( 'datetime_end_timezone', $datetime_end_timezone );
 	}
 
@@ -481,7 +486,7 @@ class Catalog extends Data {
 	 *
 	 * @param string $datetime_promoted Promoted date.
 	 */
-	public function set_datetime_promoted( string $datetime_promoted ) {
+	public function set_datetime_promoted( string $datetime_promoted ): void {
 		$this->set_date_prop( 'datetime_promoted', $datetime_promoted );
 	}
 }

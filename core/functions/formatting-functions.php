@@ -10,17 +10,32 @@
 
 use RFD\Core\DateTime;
 
-defined( 'ABSPATH' ) || exit;
+defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
 /**
  * Converts a string (e.g. 'yes' or 'no') to a bool.
  *
- * @param string|bool $string String to convert. If a bool is passed it will be returned as-is.
+ * @param string|int|bool $string String to convert. If a bool is passed it will be returned as-is.
  *
  * @return bool
  */
 function rfd_string_to_bool( $string ): bool {
-	return is_bool( $string ) ? $string : ( 'yes' === strtolower( $string ) || 1 === $string || 'true' === strtolower( $string ) || '1' === $string );
+	if ( is_string( $string ) ) {
+		$bool = ( 'yes' === strtolower( $string ) || 'true' === strtolower( $string ) || '1' === $string );
+	} elseif ( is_numeric( $string ) ) {
+		$bool = ( 1 === $string );
+	} elseif ( is_bool( $string ) ) {
+		$bool = $string;
+	} else {
+		_doing_it_wrong(
+			__FUNCTION__,
+			esc_html( __( 'String passed to string_to_bool is not numeric, string or bool', 'rfd-core' ) ),
+			esc_html( get_bloginfo( 'version' ) )
+		);
+		exit( 1 );
+	}
+
+	return $bool;
 }
 
 /**
@@ -47,7 +62,14 @@ function rfd_bool_to_string( $bool ): string {
  * @return array
  */
 function rfd_string_to_array( string $string, $delimiter = ',' ): array {
-	return is_array( $string ) ? $string : array_filter( explode( $delimiter, $string ) );
+	$array = explode( $delimiter, $string );
+	if ( is_array( $array ) ) {
+		$array = array_filter( $array );
+	} else {
+		$array = array();
+	}
+
+	return $array;
 }
 
 /**
@@ -68,6 +90,10 @@ function rfd_string_to_timestamp( string $time_string, $from_timestamp = null ):
 		$next_timestamp = strtotime( $time_string );
 	} else {
 		$next_timestamp = strtotime( $time_string, $from_timestamp );
+	}
+
+	if ( false === $next_timestamp ) {
+		$next_timestamp = 0;
 	}
 
 	// phpcs:ignore WordPress.DateTime.RestrictedFunctions.timezone_change_date_default_timezone_set
@@ -107,17 +133,17 @@ function rfd_string_to_datetime( string $time_string ): DateTime {
 /**
  * Get timezone offset in seconds.
  *
- * @return float
+ * @return int
  */
-function rfd_timezone_offset(): float {
+function rfd_timezone_offset(): int {
 	$timezone = get_option( 'timezone_string' );
 
 	if ( $timezone ) {
 		$timezone_object = new DateTimeZone( $timezone );
 
-		return $timezone_object->getOffset( new DateTime( 'now' ) );
+		return intval( $timezone_object->getOffset( new DateTime( 'now' ) ) );
 	} else {
-		return floatval( get_option( 'gmt_offset', 0 ) ) * HOUR_IN_SECONDS;
+		return intval( floatval( get_option( 'gmt_offset', 0 ) ) * HOUR_IN_SECONDS );
 	}
 }
 
@@ -143,7 +169,7 @@ function rfd_timezone_string(): string { // phpcs:ignore Generic.Metrics.Cycloma
 
 	// Get UTC offset, if it isn't set then return UTC.
 	$utc_offset = floatval( get_option( 'gmt_offset', 0 ) );
-	if ( false === is_numeric( $utc_offset ) || 0.0 === $utc_offset ) {
+	if ( 0.0 === $utc_offset ) {
 		return 'UTC';
 	}
 

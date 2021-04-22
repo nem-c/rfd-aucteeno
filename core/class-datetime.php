@@ -40,7 +40,7 @@ class DateTime extends PHPDateTime {
 	 *
 	 * @param int $offset Offset.
 	 */
-	public function set_utc_offset( int $offset ) {
+	public function set_utc_offset( int $offset ): void {
 		$this->utc_offset = $offset;
 	}
 
@@ -48,7 +48,11 @@ class DateTime extends PHPDateTime {
 	 * Get UTC offset if set, or default to the DateTime object's offset.
 	 */
 	public function get_offset(): int {
-		return $this->utc_offset ?: parent::getOffset();
+		if ( true === empty( $this->utc_offset ) ) {
+			return parent::getOffset();
+		}
+
+		return $this->utc_offset;
 	}
 
 	/**
@@ -70,7 +74,7 @@ class DateTime extends PHPDateTime {
 	 * @return int
 	 */
 	public function get_timestamp(): int {
-		return method_exists( 'DateTime', 'getTimestamp' ) ? parent::getTimestamp() : $this->format( 'U' );
+		return parent::getTimestamp();
 	}
 
 	/**

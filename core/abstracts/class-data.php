@@ -11,6 +11,7 @@
 namespace RFD\Core\Abstracts;
 
 use Exception;
+use RFD\Core\Meta_Data;
 use WP_Error;
 use RFD\Core\Data_Store_WP;
 use RFD\Core\DateTime;
@@ -85,7 +86,7 @@ abstract class Data {
 	 * Contains a reference to the data store for this class.
 	 *
 	 * @since 2.3.0
-	 * @var object
+	 * @var Data_Store
 	 */
 	protected $data_store;
 
@@ -114,6 +115,10 @@ abstract class Data {
 	public function __construct( $read = 0 ) {
 		$this->data         = array_merge( $this->data, $this->extra_data );
 		$this->default_data = $this->data;
+
+		if ( is_numeric( $read ) && $read > 0 ) {
+			$this->set_id( $read );
+		}
 	}
 
 	/**
@@ -135,7 +140,7 @@ abstract class Data {
 			$this->__construct( absint( $this->id ) );
 		} catch ( Exception $e ) {
 			$this->set_id( 0 );
-			$this->set_object_read( true );
+			$this->set_object_read();
 		}
 	}
 
@@ -180,14 +185,14 @@ abstract class Data {
 	 * @return bool result
 	 */
 	public function delete( $force_delete = false ): bool {
-		if ( $this->data_store ) {
-			$this->data_store->delete( $this, array( 'force_delete' => $force_delete ) );
-			$this->set_id( 0 );
-
-			return true;
+		if ( true === empty( $this->data_store ) ) {
+			return false;
 		}
 
-		return false;
+		$this->data_store->delete( $this, array( 'force_delete' => $force_delete ) );
+		$this->set_id( 0 );
+
+		return true;
 	}
 
 	/**
@@ -196,7 +201,7 @@ abstract class Data {
 	 * @return int
 	 */
 	public function save(): int {
-		if ( ! $this->data_store ) {
+		if ( false === empty( $this->data_store ) ) {
 			return $this->get_id();
 		}
 
@@ -231,7 +236,12 @@ abstract class Data {
 	 * @return string Data in JSON format.
 	 */
 	public function __toString() {
-		return wp_json_encode( $this->get_data() );
+		$stringified = wp_json_encode( $this->get_data() );
+		if ( true === empty( $stringified ) ) {
+			$stringified = '';
+		}
+
+		return $stringified;
 	}
 
 	/**
@@ -290,7 +300,8 @@ abstract class Data {
 	 *
 	 * @return bool   true if it's an internal key, false otherwise
 	 */
-	protected function is_internal_meta_key( $key ): bool {
+	protected function is_internal_meta_key( string $key ): bool {
+		// @phpstan-ignore-next-line.
 		$internal_meta_key = ! empty( $key ) && $this->data_store && in_array( $key, $this->data_store->get_internal_meta_keys(), true );
 
 		if ( ! $internal_meta_key ) {
@@ -301,7 +312,7 @@ abstract class Data {
 		                        // phpcs:ignore Generic.WhiteSpace.DisallowSpaceIndent.SpacesUsed
 		                        is_callable( array( $this, 'get_' . $key ) );
 
-		if ( ! $has_setter_or_getter ) {
+		if ( false === $has_setter_or_getter ) {
 
 			return false;
 		}
@@ -344,7 +355,7 @@ abstract class Data {
 		}
 
 		if ( 'view' === $context ) {
-			$value = apply_filters( $this->get_hook_prefix() . $key, $value, $this );
+			$value = apply_filters( $this->get_hook_prefix() . $key, $value, $this ); // @phpstan-ignore-line
 		}
 
 		return $value;
@@ -369,13 +380,13 @@ abstract class Data {
 	 *
 	 * @param array $data Key/Value pairs.
 	 */
-	public function set_meta_data( array $data ) { // phpcs:ignore Generic.Metrics.NestingLevel.MaxExceeded
-		if ( ! empty( $data ) && is_array( $data ) ) {
+	public function set_meta_data( array $data ): void { // phpcs:ignore Generic.Metrics.NestingLevel.MaxExceeded
+		if ( false === empty( $data ) ) {
 			$this->maybe_read_meta_data();
 			foreach ( $data as $meta ) {
 				$meta = (array) $meta;
 				if ( isset( $meta['key'], $meta['value'], $meta['id'] ) ) {
-					$this->meta_data[] = new WC_Meta_Data(
+					$this->meta_data[] = new Meta_Data(
 						array(
 							'id'    => $meta['id'],
 							'key'   => $meta['key'],
@@ -394,12 +405,12 @@ abstract class Data {
 	 * @param string|array $value Meta value.
 	 * @param bool $unique Should this be a unique key?.
 	 */
-	public function add_meta_data( $key, $value, $unique = false ) {
+	public function add_meta_data( $key, $value, $unique = false ): void {
 		if ( $this->is_internal_meta_key( $key ) ) {
 			$function = 'set_' . $key;
 
 			if ( is_callable( array( $this, $function ) ) ) {
-				return $this->{$function}( $value );
+				$this->{$function}( $value );
 			}
 		}
 
@@ -407,7 +418,7 @@ abstract class Data {
 		if ( $unique ) {
 			$this->delete_meta_data( $key );
 		}
-		$this->meta_data[] = new WC_Meta_Data(
+		$this->meta_data[] = new Meta_Data(
 			array(
 				'key'   => $key,
 				'value' => $value,
@@ -422,7 +433,7 @@ abstract class Data {
 	 * @param string|array $value Meta value.
 	 * @param int $meta_id Meta ID.
 	 */
-	public function update_meta_data( string $key, $value, $meta_id = 0 ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded,Generic.Metrics.NestingLevel.MaxExceeded
+	public function update_meta_data( string $key, $value, $meta_id = 0 ): void { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded,Generic.Metrics.NestingLevel.MaxExceeded
 		if ( $this->is_internal_meta_key( $key ) ) {
 			$function = 'set_' . $key;
 
@@ -470,7 +481,7 @@ abstract class Data {
 	 *
 	 * @param string $key Meta key.
 	 */
-	public function delete_meta_data( string $key ) {
+	public function delete_meta_data( string $key ): void {
 		$this->maybe_read_meta_data();
 		$array_keys = array_keys( wp_list_pluck( $this->meta_data, 'key' ), $key, true );
 
@@ -486,7 +497,7 @@ abstract class Data {
 	 *
 	 * @param int $mid Meta ID.
 	 */
-	public function delete_meta_data_by_mid( int $mid ) {
+	public function delete_meta_data_by_mid( int $mid ): void {
 		$this->maybe_read_meta_data();
 		$array_keys = array_keys( wp_list_pluck( $this->meta_data, 'id' ), (int) $mid, true );
 
@@ -499,11 +510,9 @@ abstract class Data {
 
 	/**
 	 * Read meta data if null.
-	 *
-	 * @since 3.0.0
 	 */
-	protected function maybe_read_meta_data() {
-		if ( is_null( $this->meta_data ) ) {
+	protected function maybe_read_meta_data(): void {
+		if ( null === $this->meta_data ) {
 			$this->read_meta_data();
 		}
 	}
@@ -513,11 +522,11 @@ abstract class Data {
 	 *
 	 * @return string
 	 */
-	public function get_meta_cache_key() {
-		if ( ! $this->get_id() ) {
+	public function get_meta_cache_key(): string {
+		if ( true === empty( $this->get_id() ) ) {
 			_doing_it_wrong( 'get_meta_cache_key', 'ID needs to be set before fetching a cache key.', '4.7.0' );
 
-			return false;
+			return '';
 		}
 
 		return self::generate_meta_cache_key( $this->get_id(), $this->cache_group );
@@ -532,7 +541,11 @@ abstract class Data {
 	 * @return string Meta cache key.
 	 */
 	public static function generate_meta_cache_key( $id, string $cache_group ): string {
-		return WC_Cache_Helper::get_cache_prefix( $cache_group ) . WC_Cache_Helper::get_cache_prefix( 'object_' . $id ) . 'object_meta_' . $id;
+		/**
+		 * TODO:
+		 * WC_Cache_Helper::get_cache_prefix( $cache_group ) . WC_Cache_Helper::get_cache_prefix( 'object_' . $id ) . 'object_meta_' . $id;
+		 */
+		return '';
 	}
 
 	/**
@@ -541,7 +554,7 @@ abstract class Data {
 	 * @param array $raw_meta_data_collection Array of objects of { object_id => array( meta_row_1, meta_row_2, ... }.
 	 * @param string $cache_group Name of cache group.
 	 */
-	public static function prime_raw_meta_data_cache( array $raw_meta_data_collection, string $cache_group ) {
+	public static function prime_raw_meta_data_cache( array $raw_meta_data_collection, string $cache_group ): void {
 		foreach ( $raw_meta_data_collection as $object_id => $raw_meta_data_array ) {
 			$cache_key = self::generate_meta_cache_key( $object_id, $cache_group );
 			wp_cache_set( $cache_key, $raw_meta_data_array, $cache_group );
@@ -554,24 +567,26 @@ abstract class Data {
 	 *
 	 * @param bool $force_read True to force a new DB read (and update cache).
 	 */
-	public function read_meta_data( $force_read = false ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded
+	public function read_meta_data( $force_read = false ): void { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded
 		$this->meta_data = array();
 		$cache_loaded    = false;
 
-		if ( ! $this->get_id() ) {
+		if ( true === empty( $this->get_id() ) ) {
 			return;
 		}
 
-		if ( ! $this->data_store ) {
+		if ( true === empty( $this->data_store ) ) {
 			return;
 		}
 
-		if ( ! empty( $this->cache_group ) ) {
-			// Prefix by group allows invalidation by group until https://core.trac.wordpress.org/ticket/4476 is implemented.
-			$cache_key = $this->get_meta_cache_key();
+		if ( true === empty( $this->cache_group ) ) {
+			return;
 		}
 
-		if ( ! $force_read ) {
+		// Prefix by group allows invalidation by group until https://core.trac.wordpress.org/ticket/4476 is implemented.
+		$cache_key = $this->get_meta_cache_key();
+
+		if ( false === $force_read ) {
 			if ( ! empty( $this->cache_group ) ) {
 				$cached_meta  = wp_cache_get( $cache_key, $this->cache_group );
 				$cache_loaded = ! empty( $cached_meta );
@@ -579,11 +594,12 @@ abstract class Data {
 		}
 
 		// We filter the raw meta data again when loading from cache, in case we cached in an earlier version where filter conditions were different.
+		// @phpstan-ignore-next-line.
 		$raw_meta_data = $cache_loaded ? $this->data_store->filter_raw_meta_data( $this, $cached_meta ) : $this->data_store->read_meta( $this );
 
 		if ( $raw_meta_data ) {
 			foreach ( $raw_meta_data as $meta ) {
-				$this->meta_data[] = new WC_Meta_Data(
+				$this->meta_data[] = new Meta_Data(
 					array(
 						'id'    => (int) $meta->meta_id,
 						'key'   => $meta->meta_key,
@@ -601,29 +617,33 @@ abstract class Data {
 	/**
 	 * Update Meta Data in the database.
 	 */
-	public function save_meta_data() { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded,Generic.Metrics.NestingLevel.MaxExceeded
-		if ( ! $this->data_store || is_null( $this->meta_data ) ) {
+	public function save_meta_data(): void { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded,Generic.Metrics.NestingLevel.MaxExceeded
+		if ( true === empty( $this->data_store ) || true === empty( $this->meta_data ) ) {
 			return;
 		}
 		foreach ( $this->meta_data as $array_key => $meta ) {
 			if ( is_null( $meta->value ) ) {
 				if ( ! empty( $meta->id ) ) {
-					$this->data_store->delete_meta( $this, $meta );
+					$this->data_store->delete_meta( $this, $meta ); // @phpstan-ignore-line
 					unset( $this->meta_data[ $array_key ] );
 				}
 			} elseif ( empty( $meta->id ) ) {
-				$meta->id = $this->data_store->add_meta( $this, $meta );
+				$meta->id = $this->data_store->add_meta( $this, $meta );  // @phpstan-ignore-line
 				$meta->apply_changes();
 			} else {
-				if ( $meta->get_changes() ) {
-					$this->data_store->update_meta( $this, $meta );
-					$meta->apply_changes();
+				if ( $meta->get_changes() ) {  // @phpstan-ignore-line
+					$this->data_store->update_meta( $this, $meta ); // @phpstan-ignore-line
+					$meta->apply_changes(); // @phpstan-ignore-line
 				}
 			}
 		}
-		if ( ! empty( $this->cache_group ) ) {
-			$cache_key = WC_Cache_Helper::get_cache_prefix( $this->cache_group ) . WC_Cache_Helper::get_cache_prefix( 'object_' . $this->get_id() ) . 'object_meta_' . $this->get_id();
-			wp_cache_delete( $cache_key, $this->cache_group );
+		if ( false === empty( $this->cache_group ) ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedIf
+			/**
+			 * TODO:
+			 *
+			 * $cache_key = WC_Cache_Helper::get_cache_prefix( $this->cache_group ) . WC_Cache_Helper::get_cache_prefix( 'object_' . $this->get_id() ) . 'object_meta_' . $this->get_id();
+			 * wp_cache_delete( $cache_key, $this->cache_group );
+			 */
 		}
 	}
 
@@ -632,14 +652,14 @@ abstract class Data {
 	 *
 	 * @param int $id ID.
 	 */
-	public function set_id( int $id ) {
+	public function set_id( int $id ): void {
 		$this->id = absint( $id );
 	}
 
 	/**
 	 * Set all props to default values.
 	 */
-	public function set_defaults() {
+	public function set_defaults(): void {
 		$this->data    = $this->default_data;
 		$this->changes = array();
 		$this->set_object_read( false );
@@ -650,7 +670,7 @@ abstract class Data {
 	 *
 	 * @param boolean $read Should read?.
 	 */
-	public function set_object_read( $read = true ) {
+	public function set_object_read( $read = true ): void {
 		$this->object_read = (bool) $read;
 	}
 
@@ -692,7 +712,7 @@ abstract class Data {
 				if ( ! $errors ) {
 					$errors = new WP_Error();
 				}
-				$errors->add( $e->getErrorCode(), $e->getMessage() );
+				$errors->add( $e->getErrorCode(), $e->getMessage() ); // @phpstan-ignore-line
 			}
 		}
 
@@ -708,7 +728,7 @@ abstract class Data {
 	 * @param string $prop Name of prop to set.
 	 * @param mixed $value Value of the prop.
 	 */
-	protected function set_prop( string $prop, $value ) { // phpcs:ignore Generic.Metrics.NestingLevel.MaxExceeded
+	protected function set_prop( string $prop, $value ): void { // phpcs:ignore Generic.Metrics.NestingLevel.MaxExceeded
 		if ( array_key_exists( $prop, $this->data ) ) {
 			if ( true === $this->object_read ) {
 				if ( $value !== $this->data[ $prop ] || array_key_exists( $prop, $this->changes ) ) {
@@ -732,7 +752,7 @@ abstract class Data {
 	/**
 	 * Merge changes with data and clear.
 	 */
-	public function apply_changes() {
+	public function apply_changes(): void {
 		$this->data    = array_replace_recursive( $this->data, $this->changes ); // @codingStandardsIgnoreLine
 		$this->changes = array();
 	}
@@ -764,7 +784,7 @@ abstract class Data {
 			$value = array_key_exists( $prop, $this->changes ) ? $this->changes[ $prop ] : $this->data[ $prop ];
 
 			if ( 'view' === $context ) {
-				$value = apply_filters( $this->get_hook_prefix() . $prop, $value, $this );
+				$value = apply_filters( $this->get_hook_prefix() . $prop, $value, $this ); // @phpstan-ignore-line
 			}
 		}
 
@@ -775,9 +795,9 @@ abstract class Data {
 	 * Sets a date prop whilst handling formatting and datetime objects.
 	 *
 	 * @param string $prop Name of prop to set.
-	 * @param string|integer $value Value of the prop.
+	 * @param int|string|null $value Value of the prop.
 	 */
-	protected function set_date_prop( string $prop, $value ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded,Generic.Metrics.NestingLevel.MaxExceeded
+	protected function set_date_prop( string $prop, $value ): void { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded,Generic.Metrics.NestingLevel.MaxExceeded
 		try {
 			if ( empty( $value ) ) {
 				$this->set_prop( $prop, null );
@@ -785,7 +805,7 @@ abstract class Data {
 				return;
 			}
 
-			if ( is_a( $value, 'DateTime' ) ) {
+			if ( is_a( $value, 'DateTime' ) ) { // @phpstan-ignore-line
 				$datetime = $value;
 			} elseif ( is_numeric( $value ) ) {
 				// Timestamps are handled as UTC timestamps in all cases.
@@ -823,7 +843,7 @@ abstract class Data {
 	 *
 	 * @throws Data_Exception Data Exception.
 	 */
-	protected function error( string $code, string $message, $http_status_code = 400, $data = array() ) {
+	protected function error( string $code, string $message, $http_status_code = 400, $data = array() ): void {
 		throw new Data_Exception( $code, $message, $http_status_code );
 	}
 }
