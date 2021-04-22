@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Class for parameter-based Catalog querying
  *

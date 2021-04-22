@@ -1,4 +1,10 @@
 <?php
+/**
+ * Catalog Data Store
+ *
+ * @package RFD\Aucteeno
+ * @subpackage RFD\Aucteeno\Data_Stores
+ */
 
 namespace RFD\Aucteeno\Data_Stores;
 

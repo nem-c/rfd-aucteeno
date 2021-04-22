@@ -46,10 +46,10 @@ function acn_get_catalogs( array $args ) {
 
 	// Handle some BW compatibility arg names where wp_query args differ in naming.
 	$map_legacy = array(
-		'numberposts'    => 'limit',
+		'numberposts'    => 'limit', // @codingStandardsIgnoreLine
 		'post_status'    => 'status',
 		'post_parent'    => 'parent',
-		'posts_per_page' => 'limit',
+		'posts_per_page' => 'limit', // @codingStandardsIgnoreLine
 		'paged'          => 'page',
 	);
 

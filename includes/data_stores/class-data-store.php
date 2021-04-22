@@ -1,6 +1,6 @@
 <?php
 /**
- * WC Data Store.
+ * Aucteeno Data Store.
  *
  * @package RFD\Aucteeno
  */

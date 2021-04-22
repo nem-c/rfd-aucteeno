@@ -1,4 +1,9 @@
 <?php
+/**
+ * Data Store Abstraction Layer.
+ *
+ * @package RFD\Aucteeno
+ */
 
 namespace RFD\Core\Abstracts;
 
