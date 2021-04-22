@@ -64,7 +64,7 @@ function rfd_bool_to_string( $bool ): string {
 function rfd_string_to_array( string $string, $delimiter = ',' ): array {
 	$array = explode( $delimiter, $string );
 
-	return array_filter( $array ); // @phpstan-ignore-line
+	return array_filter( $array );
 }
 
 /**
