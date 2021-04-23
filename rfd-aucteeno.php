@@ -35,6 +35,7 @@ define( 'RFD_AUCTEENO_TEMPLATES_DIR', RFD_AUCTEENO_PLUGIN_DIR . 'templates' . DI
 define( 'RFD_AUCTEENO_BLOCKS_DIR', RFD_AUCTEENO_PLUGIN_DIR . 'blocks' . DIRECTORY_SEPARATOR );
 define( 'RFD_AUCTEENO_BLOCKS_URL', RFD_AUCTEENO_PLUGIN_URL . 'blocks/' );
 
+require_once RFD_AUCTEENO_PLUGIN_DIR . 'autoload-bootstrap.php';
 require_once RFD_AUCTEENO_PLUGIN_DIR . 'core/autoload.php';
 require_once RFD_AUCTEENO_PLUGIN_DIR . 'functions/functions.php';
 
