@@ -7,6 +7,7 @@
 
 defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
+
 const RFD_AUCTEENO_PLUGIN_PREFIX = '_acn_';
 
 const RFD_AUCTEENO_CATALOG_META_DATETIME_PROMOTED       = RFD_AUCTEENO_PLUGIN_PREFIX . 'catalog_datetime_promoted';

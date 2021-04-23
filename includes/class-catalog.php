@@ -64,6 +64,16 @@ class Catalog extends Data {
 		'gallery_image_ids'       => array(),
 		'category_ids'            => array(),
 		'tag_ids'                 => array(),
+		'is_online'               => false,
+		'online_url'              => '',
+		'location_address'        => '',
+		'location_address_2'      => '',
+		'location_city'           => '',
+		'location_postal_code'    => '',
+		'location_state'          => '',
+		'location_country_iso2'   => '',
+		'location_latitude'       => 0.0,
+		'location_longitude'      => 0.0,
 	);
 
 	/**
@@ -363,6 +373,116 @@ class Catalog extends Data {
 		return $this->get_prop( 'datetime_promoted', $context );
 	}
 
+	/**
+	 * Get Is Online Flag.
+	 *
+	 * @param string $context What the value is for. Valid values are view and edit.
+	 *
+	 * @return string|null
+	 */
+	public function get_is_online( $context = 'view' ): ?string {
+		return $this->get_prop( 'is_online', $context );
+	}
+
+	/**
+	 * Get Online URL.
+	 *
+	 * @param string $context What the value is for. Valid values are view and edit.
+	 *
+	 * @return string|null
+	 */
+	public function get_online_url( $context = 'view' ): ?string {
+		return $this->get_prop( 'online_url', $context );
+	}
+
+	/**
+	 * Get Location Address.
+	 *
+	 * @param string $context What the value is for. Valid values are view and edit.
+	 *
+	 * @return string|null
+	 */
+	public function get_location_address( $context = 'view' ): ?string {
+		return $this->get_prop( 'location_address' );
+	}
+
+	/**
+	 * Get Location Address 2.
+	 *
+	 * @param string $context What the value is for. Valid values are view and edit.
+	 *
+	 * @return string|null
+	 */
+	public function get_location_address_2( $context = 'view' ): ?string {
+		return $this->get_prop( 'location_address_2' );
+	}
+
+	/**
+	 * Get Location City.
+	 *
+	 * @param string $context What the value is for. Valid values are view and edit.
+	 *
+	 * @return string|null
+	 */
+	public function get_location_city( $context = 'view' ): ?string {
+		return $this->get_prop( 'location_city' );
+	}
+
+	/**
+	 * Get Location Postal Code.
+	 *
+	 * @param string $context What the value is for. Valid values are view and edit.
+	 *
+	 * @return string|null
+	 */
+	public function get_location_postal_code( $context = 'view' ): ?string {
+		return $this->get_prop( 'location_postal_code' );
+	}
+
+	/**
+	 * Get Location State.
+	 *
+	 * @param string $context What the value is for. Valid values are view and edit.
+	 *
+	 * @return string|null
+	 */
+	public function get_location_state( $context = 'view' ): ?string {
+		return $this->get_prop( 'location_state' );
+	}
+
+	/**
+	 * Get Location Country ISO2.
+	 *
+	 * @param string $context What the value is for. Valid values are view and edit.
+	 *
+	 * @return string|null
+	 */
+	public function get_location_country_iso2( $context = 'view' ): ?string {
+		return $this->get_prop( 'location_country_iso2' );
+	}
+
+	/**
+	 * Get Location Latitude.
+	 *
+	 * @param string $context What the value is for. Valid values are view and edit.
+	 *
+	 * @return float|null
+	 */
+	public function get_location_latitude( $context = 'view' ): ?float {
+		return floatval( $this->get_prop( 'location_latitude' ) );
+	}
+
+	/**
+	 * Get Location Longitude.
+	 *
+	 * @param string $context What the value is for. Valid values are view and edit.
+	 *
+	 * @return float|null
+	 */
+	public function get_location_longitude( $context = 'view' ): ?float {
+		return floatval( $this->get_prop( 'location_longitude' ) );
+	}
+
 	/*
 	|--------------------------------------------------------------------------
 	| Setters
@@ -488,5 +608,95 @@ class Catalog extends Data {
 	 */
 	public function set_datetime_promoted( string $datetime_promoted ): void {
 		$this->set_date_prop( 'datetime_promoted', $datetime_promoted );
+	}
+
+	/**
+	 * Set Is Online Flag
+	 *
+	 * @param string|int|bool $is_online Flag.
+	 */
+	public function set_is_online( $is_online ): void {
+		$this->set_prop( 'is_online', rfd_string_to_bool( $is_online ) );
+	}
+
+	/**
+	 * Set Catalog Online URL.
+	 *
+	 * @param string $url External Catalog URL.
+	 */
+	public function set_online_url( string $url ): void {
+		$this->set_prop( 'online_url', $url );
+	}
+
+	/**
+	 * Set Catalog Location Address.
+	 *
+	 * @param string $address Address.
+	 */
+	public function set_location_address( string $address ): void {
+		$this->set_prop( 'location_address', $address );
+	}
+
+	/**
+	 * Set Catalog Location Address 2
+	 *
+	 * @param string $address_2 Address 2.
+	 */
+	public function set_location_address_2( string $address_2 ): void {
+		$this->set_prop( 'location_address_2', $address_2 );
+	}
+
+	/**
+	 * Set Catalog Location City.
+	 *
+	 * @param string $city City.
+	 */
+	public function set_location_city( string $city ): void {
+		$this->set_prop( 'location_city', $city );
+	}
+
+	/**
+	 * Set Location Postal Code.
+	 *
+	 * @param string $postal_code Postal Code.
+	 */
+	public function set_location_postal_code( string $postal_code ): void {
+		$this->set_prop( 'location_postal_code', $postal_code );
+	}
+
+	/**
+	 * Set Location State.
+	 *
+	 * @param string $state State.
+	 */
+	public function set_location_state( string $state ): void {
+		$this->set_prop( 'location_state', $state );
+	}
+
+	/**
+	 * Set Location Country ISO2 Code.
+	 *
+	 * @param string $country_iso2 ISO2 Code.
+	 */
+	public function set_location_country_iso2( string $country_iso2 ): void {
+		$this->set_prop( 'location_country_iso2', $country_iso2 );
+	}
+
+	/**
+	 * Set Location Latitude.
+	 *
+	 * @param float $latitude Latitude.
+	 */
+	public function set_location_latitude( float $latitude ): void {
+		$this->set_prop( 'location_latitude', floatval( $latitude ) );
+	}
+
+	/**
+	 * Set Location Longitude.
+	 *
+	 * @param float $longitude Longitude.
+	 */
+	public function set_location_longitude( float $longitude ): void {
+		$this->set_prop( 'location_longitude', floatval( $longitude ) );
 	}
 }

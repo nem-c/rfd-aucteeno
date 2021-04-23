@@ -201,7 +201,7 @@ abstract class Data {
 	 * @return int
 	 */
 	public function save(): int {
-		if ( false === empty( $this->data_store ) ) {
+		if ( true === empty( $this->data_store ) ) {
 			return $this->get_id();
 		}
 

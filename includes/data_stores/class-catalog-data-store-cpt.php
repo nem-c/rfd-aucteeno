@@ -324,6 +324,16 @@ class Catalog_Data_Store_Cpt extends Data_Store_WP implements Object_Data_Store_
 			RFD_AUCTEENO_CATALOG_META_DATETIME_END_GMT        => 'datetime_end_gmt',
 			RFD_AUCTEENO_CATALOG_META_DATETIME_START_TIMEZONE => 'datetime_start_timezone',
 			RFD_AUCTEENO_CATALOG_META_DATETIME_END_TIMEZONE   => 'datetime_end_timezone',
+			RFD_AUCTEENO_CATALOG_META_IS_ONLINE               => 'is_online',
+			RFD_AUCTEENO_CATALOG_META_ONLINE_URL              => 'online_url',
+			RFD_AUCTEENO_CATALOG_META_LOCATION_ADDRESS        => 'location_address',
+			RFD_AUCTEENO_CATALOG_META_LOCATION_ADDRESS_2      => 'location_address_2',
+			RFD_AUCTEENO_CATALOG_META_LOCATION_CITY           => 'location_city',
+			RFD_AUCTEENO_CATALOG_META_LOCATION_POSTAL_CODE    => 'location_postal_code',
+			RFD_AUCTEENO_CATALOG_META_LOCATION_STATE          => 'location_state',
+			RFD_AUCTEENO_CATALOG_META_LOCATION_COUNTRY_ISO2   => 'location_country_iso2',
+			RFD_AUCTEENO_CATALOG_META_LOCATION_LATITUDE       => 'location_latitude',
+			RFD_AUCTEENO_CATALOG_META_LOCATION_LONGITUDE      => 'location_longitude',
 		);
 		// @codingStandardsIgnoreEnd
 
@@ -375,6 +385,16 @@ class Catalog_Data_Store_Cpt extends Data_Store_WP implements Object_Data_Store_
 			RFD_AUCTEENO_CATALOG_META_DATETIME_END_GMT        => 'datetime_end_gmt',
 			RFD_AUCTEENO_CATALOG_META_DATETIME_START_TIMEZONE => 'datetime_start_timezone',
 			RFD_AUCTEENO_CATALOG_META_DATETIME_END_TIMEZONE   => 'datetime_end_timezone',
+			RFD_AUCTEENO_CATALOG_META_IS_ONLINE               => 'is_online',
+			RFD_AUCTEENO_CATALOG_META_ONLINE_URL              => 'online_url',
+			RFD_AUCTEENO_CATALOG_META_LOCATION_ADDRESS        => 'location_address',
+			RFD_AUCTEENO_CATALOG_META_LOCATION_ADDRESS_2      => 'location_address_2',
+			RFD_AUCTEENO_CATALOG_META_LOCATION_CITY           => 'location_city',
+			RFD_AUCTEENO_CATALOG_META_LOCATION_POSTAL_CODE    => 'location_postal_code',
+			RFD_AUCTEENO_CATALOG_META_LOCATION_STATE          => 'location_state',
+			RFD_AUCTEENO_CATALOG_META_LOCATION_COUNTRY_ISO2   => 'location_country_iso2',
+			RFD_AUCTEENO_CATALOG_META_LOCATION_LATITUDE       => 'location_latitude',
+			RFD_AUCTEENO_CATALOG_META_LOCATION_LONGITUDE      => 'location_longitude',
 		);
 		// @codingStandardsIgnoreEnd
 

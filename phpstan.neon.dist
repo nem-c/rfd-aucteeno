@@ -8,10 +8,13 @@ parameters:
   checkMissingIterableValueType: false
   paths:
     - %currentWorkingDirectory%/
-  excludes_analyse:
-    - %currentWorkingDirectory%/tests/*
-    - vendor
-    - autoload.php
+  excludePaths:
+    analyse:
+      - %currentWorkingDirectory%/tests/*
+      - vendor
+      - autoload.php
+    analyseAndScan:
+      - i18n/*
   bootstrapFiles:
     - vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
     - autoload-bootstrap.php

@@ -15,21 +15,23 @@ defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 /**
  * Converts a string (e.g. 'yes' or 'no') to a bool.
  *
- * @param string|int|bool $string String to convert. If a bool is passed it will be returned as-is.
+ * @param string|int|bool|null $string String to convert. If a bool is passed it will be returned as-is.
  *
  * @return bool
  */
-function rfd_string_to_bool( $string ): bool {
+function rfd_string_to_bool( $string ): bool { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
 	if ( is_string( $string ) ) {
 		$bool = ( 'yes' === strtolower( $string ) || 'true' === strtolower( $string ) || '1' === $string );
 	} elseif ( is_numeric( $string ) ) {
 		$bool = ( 1 === $string );
 	} elseif ( is_bool( $string ) ) {
 		$bool = $string;
+	} elseif ( is_null( $string ) ) {
+		$bool = false;
 	} else {
 		_doing_it_wrong(
 			__FUNCTION__,
-			esc_html( __( 'String passed to string_to_bool is not numeric, string or bool', 'rfd-core' ) ),
+			esc_html( __( 'String passed to string_to_bool is not numeric, string, null or bool', 'rfd-core' ) ),
 			esc_html( get_bloginfo( 'version' ) )
 		);
 		exit( 1 );

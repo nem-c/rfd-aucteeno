@@ -85,5 +85,6 @@ class Catalog_Post_Type extends Post_Type {
 		'editor',
 		'author',
 		'excerpt',
+		'thumbnail',
 	);
 }

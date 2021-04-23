@@ -79,6 +79,8 @@ class Init extends Abstract_Init {
 	 */
 	protected function prepare_admin(): void {
 		$this->add_meta_box( 'RFD\Aucteeno\Admin\Meta_Boxes\Catalog_Dates_Meta_Box' );
+		$this->add_meta_box( 'RFD\Aucteeno\Admin\Meta_Boxes\Catalog_Online_Meta_Box' );
+		$this->add_meta_box( 'RFD\Aucteeno\Admin\Meta_Boxes\Catalog_Location_Meta_Box' );
 	}
 
 	/**

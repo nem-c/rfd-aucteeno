@@ -17,6 +17,11 @@ return array(
 			'src'    => RFD_AUCTEENO_ASSETS_URL . 'vendor/simple-picker/simplepicker.css.map',
 			'ver'    => RFD_AUCTEENO_VERSION,
 		),
+		array(
+			'handle' => 'mapbox',
+			'src'    => 'https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.css',
+			'ver'    => RFD_AUCTEENO_VERSION,
+		),
 	),
 	'js'  => array(
 		array(
@@ -28,6 +33,12 @@ return array(
 		array(
 			'handle'    => 'vendor-simple-picker',
 			'src'       => RFD_AUCTEENO_ASSETS_URL . 'vendor/simple-picker/simplepicker.js',
+			'ver'       => RFD_AUCTEENO_VERSION,
+			'in_footer' => true,
+		),
+		array(
+			'handle'    => 'mapbox',
+			'src'       => 'https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.js',
 			'ver'       => RFD_AUCTEENO_VERSION,
 			'in_footer' => true,
 		),

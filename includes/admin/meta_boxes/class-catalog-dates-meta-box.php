@@ -1,6 +1,6 @@
 <?php
 /**
- * Listing Date Meta Box
+ * Catalog Date Meta Box
  *
  * @link       https://cimba.blog/
  * @since      0.9.0
@@ -21,7 +21,7 @@ use RFD\Core\View;
 defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
 /**
- * Class Listing_Dates_Meta_Box
+ * Class Catalog_Dates_Meta_Box
  */
 class Catalog_Dates_Meta_Box extends Post_Meta_Box {
 	/**
@@ -29,7 +29,7 @@ class Catalog_Dates_Meta_Box extends Post_Meta_Box {
 	 *
 	 * @var string
 	 */
-	protected $id = 'listing-date-meta-box';
+	protected $id = 'catalog-date-meta-box';
 
 	/**
 	 * Post meta box post-type screen availability
@@ -88,7 +88,7 @@ class Catalog_Dates_Meta_Box extends Post_Meta_Box {
 	 *
 	 * @throws Exception Exception.
 	 */
-	public function render( WP_Post $post ): void {
+	public function render( WP_Post $post ): void { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded
 		$nonce_field = $this->nonce_field();
 
 		try {
@@ -100,20 +100,31 @@ class Catalog_Dates_Meta_Box extends Post_Meta_Box {
 		}
 
 		if ( true === empty( $catalog ) ) {
-			$datetime_start          = '';
-			$datetime_start_timezone = '';
-			$datetime_end            = '';
-			$datetime_end_timezone   = '';
-			$datetime_promoted       = '';
+			$datetime_start          = gmdate( 'Y-m-d\TH:i:\0\0' );
+			$datetime_start_timezone = get_option( 'timezone_string' );
+			$datetime_end            = gmdate( 'Y-m-d\TH:i:\0\0' );
+			$datetime_end_timezone   = get_option( 'timezone_string' );
+			$datetime_promoted       = gmdate( 'Y-m-d\TH:i:\0\0' );
 		} else {
 			// @phpstan-ignore-next-line
 			$datetime_start          = rfd_string_to_datetime( $catalog->get_datetime_start() )->format( 'Y-m-d\TH:i:s' );
 			$datetime_start_timezone = $catalog->get_datetime_start_timezone();
+			if ( '1970-01-01T00:00:00' === $datetime_start ) {
+				$datetime_start          = gmdate( 'Y-m-d\TH:i:\0\0' );
+				$datetime_start_timezone = get_option( 'timezone_string' );
+			}
 			// @phpstan-ignore-next-line
 			$datetime_end          = rfd_string_to_datetime( $catalog->get_datetime_end() )->format( 'Y-m-d\TH:i:s' );
 			$datetime_end_timezone = $catalog->get_datetime_end_timezone();
+			if ( '1970-01-01T00:00:00' === $datetime_end ) {
+				$datetime_end          = gmdate( 'Y-m-d\TH:i:\0\0' );
+				$datetime_end_timezone = get_option( 'timezone_string' );
+			}
 			// @phpstan-ignore-next-line
 			$datetime_promoted = rfd_string_to_datetime( $catalog->get_datetime_promoted() )->format( 'Y-m-d\TH:i:s' );
+			if ( '1970-01-01T00:00:00' === $datetime_promoted ) {
+				$datetime_promoted = gmdate( 'Y-m-d\TH:i:\0\0' );
+			}
 		}
 
 		View::render_template(
@@ -160,9 +171,9 @@ class Catalog_Dates_Meta_Box extends Post_Meta_Box {
 		//phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$date_end_timezone = sanitize_text_field( wp_unslash( $_POST['date_end_timezone'] ?? '' ) );
 
-		$datetime_promoted = wp_date_immutable( $date_promoted )->format( 'Y-m-d H:i:s' );
-		$datetime_start    = wp_date_immutable( $date_start )->format( 'Y-m-d H:i:s' );
-		$datetime_end      = wp_date_immutable( $date_end )->format( 'Y-m-d H:i:s' );
+		$datetime_promoted = wp_date_immutable( $date_promoted )->format( 'Y-m-d\TH:i:s' );
+		$datetime_start    = wp_date_immutable( $date_start )->format( 'Y-m-d\TH:i:s' );
+		$datetime_end      = wp_date_immutable( $date_end )->format( 'Y-m-d\TH:i:s' );
 
 		// if timezone is empty use default.
 		if ( true === empty( $date_start_timezone ) ) {
