@@ -80,6 +80,11 @@ spl_autoload_register(
 		$fully_qualified_path .= $file_name;
 		if ( stream_resolve_include_path( $fully_qualified_path ) ) {
 			include_once $fully_qualified_path;
+			_doing_it_wrong(
+				__FUNCTION__,
+				esc_html( $fully_qualified_path . ' is not part of autoload-bootstrap.' ),
+				esc_html( RFD_CORE_VERSION )
+			);
 		}
 	}
 );

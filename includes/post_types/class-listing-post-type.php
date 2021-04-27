@@ -87,4 +87,18 @@ class Listing_Post_Type extends Post_Type {
 		'thumbnail',
 		'excerpt',
 	);
+
+	/**
+	 * Menu position.
+	 *
+	 * @var int
+	 */
+	protected $menu_position = 52;
+
+	/**
+	 * Menu icon.
+	 *
+	 * @var string
+	 */
+	protected $menu_icon = 'dashicons-images-alt';
 }

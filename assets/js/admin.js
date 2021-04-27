@@ -74,7 +74,6 @@ jQuery(function ($) {
                 $('#rfd_aucteeno_catalog_location_longitude').val(parseFloat(response.lon).toFixed(6));
             }
         }).done(function (response) {
-            console.log(response);
             button.prop('disabled', false);
         });
     })
@@ -83,20 +82,18 @@ jQuery(function ($) {
 function loadSingleCatalogMapbox($) {
     let defaultLatitude = 44.787197;
     let defaultLongitude = 20.457273;
+    let detectLocation = true;
 
     const currentLatitude = parseFloat($('#rfd_aucteeno_catalog_location_latitude').val());
     const currentLongitude = parseFloat($('#rfd_aucteeno_catalog_location_longitude').val());
 
-    if (0 === currentLatitude) {
+    if (0 === currentLatitude && 0 === currentLongitude) {
         $('#rfd_aucteeno_catalog_location_latitude').val(defaultLatitude);
-    } else {
-        defaultLatitude = currentLatitude;
-    }
-
-    if (0 === currentLongitude) {
         $('#rfd_aucteeno_catalog_location_longitude').val(defaultLongitude);
     } else {
+        defaultLatitude = currentLatitude;
         defaultLongitude = currentLongitude;
+        detectLocation = false;
     }
 
     mapboxgl.accessToken = 'pk.eyJ1IjoicmZkIiwiYSI6ImNra3F3MHZwdDA4NGEydnBjbDdiYno4d2sifQ.e5N4SP248gUcvSSR4-8E6w';
@@ -118,27 +115,29 @@ function loadSingleCatalogMapbox($) {
     catalogLocationMarker.setLngLat(
         [
             defaultLongitude,
-            defaultLongitude
+            defaultLatitude
         ]
     );
     catalogLocationMarker.addTo(catalogLocationMap);
 
-    navigator.geolocation.getCurrentPosition(function (position) {
-        catalogLocationMap.flyTo(
-            {
-                center: [
+    if (true === detectLocation) {
+        navigator.geolocation.getCurrentPosition(function (position) {
+            catalogLocationMap.flyTo(
+                {
+                    center: [
+                        position.coords.longitude,
+                        position.coords.latitude
+                    ]
+                }
+            );
+            catalogLocationMarker.setLngLat(
+                [
                     position.coords.longitude,
                     position.coords.latitude
                 ]
-            }
-        );
-        catalogLocationMarker.setLngLat(
-            [
-                position.coords.longitude,
-                position.coords.latitude
-            ]
-        );
-    });
+            );
+        });
+    }
 
     catalogLocationMap.on('load', function () {
         catalogLocationMap.resize();

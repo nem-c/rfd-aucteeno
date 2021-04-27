@@ -138,6 +138,37 @@ class Catalog extends Data {
 	}
 
 	/**
+	 * Return View Catalog button text.
+	 *
+	 * @return string
+	 */
+	public function view_catalog_text(): string {
+		return __( 'View', 'rfd-aucteeno' );
+	}
+
+	/**
+	 * Returns the main product image.
+	 *
+	 * @param string $size (default: 'aucteeno_thumbnail').
+	 * @param array $attr Image attributes.
+	 * @param bool $placeholder True to return $placeholder if no image is found, or false to return an empty string.
+	 *
+	 * @return string
+	 */
+	public function get_image( $size = 'aucteeno_thumbnail', $attr = array(), $placeholder = true ): string { //phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
+		$image = '';
+		if ( $this->get_image_id() ) {
+			$image = wp_get_attachment_image( $this->get_image_id(), $size, false, $attr );
+		}
+
+		if ( true === empty( $image ) && true === $placeholder ) {
+			$image = aucteeno_catalog_placeholder_img( $size, $attr );
+		}
+
+		return apply_filters( 'aucteeno_catalog_get_image', $image, $this, $size, $attr, $placeholder, $image );
+	}
+
+	/**
 	 * Get product name.
 	 *
 	 * @param string $context What the value is for. Valid values are view and edit.
@@ -279,10 +310,10 @@ class Catalog extends Data {
 	 *
 	 * @param string $context What the value is for. Valid values are view and edit.
 	 *
-	 * @return string
+	 * @return int
 	 */
-	public function get_image_id( $context = 'view' ): string {
-		return $this->get_prop( 'image_id', $context );
+	public function get_image_id( $context = 'view' ): int {
+		return absint( $this->get_prop( 'image_id', $context ) );
 	}
 
 	/**
@@ -378,9 +409,9 @@ class Catalog extends Data {
 	 *
 	 * @param string $context What the value is for. Valid values are view and edit.
 	 *
-	 * @return string|null
+	 * @return bool|null
 	 */
-	public function get_is_online( $context = 'view' ): ?string {
+	public function get_is_online( $context = 'view' ): ?bool {
 		return $this->get_prop( 'is_online', $context );
 	}
 
@@ -403,7 +434,7 @@ class Catalog extends Data {
 	 * @return string|null
 	 */
 	public function get_location_address( $context = 'view' ): ?string {
-		return $this->get_prop( 'location_address' );
+		return $this->get_prop( 'location_address', $context );
 	}
 
 	/**
@@ -414,7 +445,7 @@ class Catalog extends Data {
 	 * @return string|null
 	 */
 	public function get_location_address_2( $context = 'view' ): ?string {
-		return $this->get_prop( 'location_address_2' );
+		return $this->get_prop( 'location_address_2', $context );
 	}
 
 	/**
@@ -425,7 +456,7 @@ class Catalog extends Data {
 	 * @return string|null
 	 */
 	public function get_location_city( $context = 'view' ): ?string {
-		return $this->get_prop( 'location_city' );
+		return $this->get_prop( 'location_city', $context );
 	}
 
 	/**
@@ -436,7 +467,7 @@ class Catalog extends Data {
 	 * @return string|null
 	 */
 	public function get_location_postal_code( $context = 'view' ): ?string {
-		return $this->get_prop( 'location_postal_code' );
+		return $this->get_prop( 'location_postal_code', $context );
 	}
 
 	/**
@@ -447,7 +478,7 @@ class Catalog extends Data {
 	 * @return string|null
 	 */
 	public function get_location_state( $context = 'view' ): ?string {
-		return $this->get_prop( 'location_state' );
+		return $this->get_prop( 'location_state', $context );
 	}
 
 	/**
@@ -458,7 +489,7 @@ class Catalog extends Data {
 	 * @return string|null
 	 */
 	public function get_location_country_iso2( $context = 'view' ): ?string {
-		return $this->get_prop( 'location_country_iso2' );
+		return $this->get_prop( 'location_country_iso2', $context );
 	}
 
 	/**
@@ -469,7 +500,7 @@ class Catalog extends Data {
 	 * @return float|null
 	 */
 	public function get_location_latitude( $context = 'view' ): ?float {
-		return floatval( $this->get_prop( 'location_latitude' ) );
+		return floatval( $this->get_prop( 'location_latitude', $context ) );
 	}
 
 	/**
@@ -480,7 +511,7 @@ class Catalog extends Data {
 	 * @return float|null
 	 */
 	public function get_location_longitude( $context = 'view' ): ?float {
-		return floatval( $this->get_prop( 'location_longitude' ) );
+		return floatval( $this->get_prop( 'location_longitude', $context ) );
 	}
 
 	/*
@@ -688,7 +719,7 @@ class Catalog extends Data {
 	 * @param float $latitude Latitude.
 	 */
 	public function set_location_latitude( float $latitude ): void {
-		$this->set_prop( 'location_latitude', floatval( $latitude ) );
+		$this->set_prop( 'location_latitude', $latitude );
 	}
 
 	/**
@@ -697,6 +728,6 @@ class Catalog extends Data {
 	 * @param float $longitude Longitude.
 	 */
 	public function set_location_longitude( float $longitude ): void {
-		$this->set_prop( 'location_longitude', floatval( $longitude ) );
+		$this->set_prop( 'location_longitude', $longitude );
 	}
 }

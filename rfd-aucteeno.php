@@ -18,6 +18,8 @@
 
 namespace RFD\Aucteeno;
 
+use RFD\Core\Logger;
+
 defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
 /**
@@ -46,4 +48,7 @@ $init_plugin = new Init();
 
 ( function () use ( $init_plugin ) {
 	$init_plugin->prepare()->run();
+	if ( true === SAVEQUERIES ) { // @phpstan-ignore-line
+		Logger::query_logger();
+	}
 } )();

@@ -6,6 +6,9 @@ parameters:
   level: max
   inferPrivatePropertyTypeFromConstructor: true
   checkMissingIterableValueType: false
+  ignoreErrors:
+    - '#Function apply_filters invoked with [0-9]+ parameters, 2 required#'
+    - '#Warning: Use of undefined constant SAVEQUERIES [a-zA-Z0-9\\_]+#'
   paths:
     - %currentWorkingDirectory%/
   excludePaths:

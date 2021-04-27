@@ -44,6 +44,27 @@ class Logger {
 		} else {
 			error_log( $log ); //phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 		}
+	}
 
+	/**
+	 * Query logger.
+	 */
+	public static function query_logger(): void {
+		add_action(
+			'shutdown',
+			function () {
+				global $wpdb;
+				// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fopen
+				$log_file = fopen( WP_CONTENT_DIR . '/sql.log', 'a' ); // @phpstan-ignore-line
+				foreach ( $wpdb->queries as $q ) {
+					// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fwrite, Generic.Strings.UnnecessaryStringConcat.Found
+					fwrite( $log_file, $q[0] . " - ($q[1] s)" . "\n\n" ); // @phpstan-ignore-line
+				}
+				// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fclose
+				// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fwrite, Generic.Strings.UnnecessaryStringConcat.Found
+				fwrite( $log_file, "\n\n ------------------------------------------------------------------- \n\n" ); // @phpstan-ignore-line
+				fclose( $log_file ); // @phpstan-ignore-line
+			}
+		);
 	}
 }

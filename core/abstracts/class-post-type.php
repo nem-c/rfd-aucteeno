@@ -142,6 +142,13 @@ abstract class Post_Type {
 	protected $menu_position = 50;
 
 	/**
+	 * Post type admin menu icon.
+	 *
+	 * @var string
+	 */
+	protected $menu_icon = '';
+
+	/**
 	 * Show post type in admin bar.
 	 *
 	 * @var bool
@@ -328,6 +335,7 @@ abstract class Post_Type {
 			'show_ui'             => $this->show_ui,
 			'show_in_menu'        => $this->show_in_menu,
 			'menu_position'       => $this->menu_position,
+			'menu_icon'           => $this->menu_icon,
 			'show_in_admin_bar'   => $this->show_in_admin_bar,
 			'show_in_nav_menus'   => $this->show_in_nav_menus,
 			'can_export'          => $this->can_export,

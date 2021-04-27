@@ -9,6 +9,10 @@
  * @subpackage RFD\Core\Views
  */
 
+if ( false === defined( 'RFD_CORE_VERSION' ) ) {
+	define( 'RFD_CORE_VERSION', '3.0' );
+}
+
 if ( false === defined( 'RFD_CORE_VIEW_PATH' ) ) {
 	define( 'RFD_CORE_VIEW_PATH', dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR );
 }

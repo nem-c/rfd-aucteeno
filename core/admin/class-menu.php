@@ -108,6 +108,16 @@ class Menu {
 					$callback,
 					$position
 				);
+			} elseif ( true === empty( $callback ) ) {
+				add_submenu_page(
+					$parent_slug,
+					$page_title,
+					$menu_title,
+					$capability,
+					$menu_slug,
+					'__return_true',
+					$position
+				);
 			}
 		}
 	}
@@ -176,7 +186,7 @@ class Menu {
 					'menu_title' => $menu_menu_title,
 					'capability' => $menu_capability,
 					'menu_slug'  => $menu_slug,
-					'function'   => $menu_callback,
+					'callback'   => $menu_callback,
 					'icon_url'   => $menu_icon,
 					'position'   => $menu_position,
 				)
@@ -198,7 +208,7 @@ class Menu {
 			$submenu_page_title = $submenu_config['page_title'] ?? '';
 			$submenu_menu_title = $submenu_config['menu_title'] ?? '';
 			$submenu_slug       = $submenu_config['slug'] ?? '';
-			$submenu_capability = apply_filters( 'rfd_submenu_ ' . $submenu_id . '_capabilities', $submenu_config['capability'] ); //phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
+			$submenu_capability = apply_filters( 'rfd_submenu_ ' . $submenu_id . '_capabilities', $submenu_config['capability'] ?? '' ); //phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 			$submenu_callback   = $submenu_config['callback'] ?? null;
 			$submenu_position   = $submenu_config['position'] ?? 99;
 

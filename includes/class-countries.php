@@ -56,7 +56,7 @@ class Countries {
 	 * @param string $selected_state Selected state.
 	 * @param false $escape Escape option value.
 	 */
-	public static function country_dropdown_options( $selected_country = '', $selected_state = '', $escape = false ): void { // phpcs:ignore Generic.Metrics.NestingLevel.MaxExceeded,Generic.Metrics.CyclomaticComplexity.TooHigh
+	public static function country_dropdown_options( $selected_country = '', $selected_state = '*', $escape = false ): void { // phpcs:ignore Generic.Metrics.NestingLevel.MaxExceeded,Generic.Metrics.CyclomaticComplexity.TooHigh
 		if ( true === empty( self::$countries ) ) {
 			self::get_countries();
 		}

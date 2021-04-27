@@ -87,3 +87,45 @@ function acn_get_catalog( $the_catalog = false ) {
 
 	return new Catalog( $the_catalog );
 }
+
+/**
+ * Get the placeholder image.
+ *
+ * Uses wp_get_attachment_image if using an attachment ID
+ *
+ * @param string $size Image size.
+ * @param string|array $attr Optional. Attributes for the image markup. Default empty.
+ *
+ * @return string
+ */
+function aucteeno_catalog_placeholder_img( $size = 'aucteeno_thumbnail', $attr = '' ): string {
+	$placeholder_image = get_option( RFD_AUCTEENO_OPTIONS_PLACEHOLDER_IMAGE_ID, 0 );
+
+	$default_attr = array(
+		'class' => 'aucteeno-placeholder wp-post-image',
+		'alt'   => __( 'Placeholder', 'rfd-aucteeno' ),
+	);
+
+	$attr = wp_parse_args( $attr, $default_attr );
+
+	if ( wp_attachment_is_image( $placeholder_image ) ) {
+		$image_html = wp_get_attachment_image(
+			$placeholder_image,
+			$size,
+			false,
+			$attr
+		);
+	} else {
+		$image     = 'https://via.placeholder.com/150';
+		$hwstring  = image_hwstring( 150, 150 );
+		$attribute = array();
+
+		foreach ( $attr as $name => $value ) {
+			$attribute[] = esc_attr( $name ) . '="' . esc_attr( $value ) . '"';
+		}
+
+		$image_html = '<img src="' . esc_url( $image ) . '" ' . $hwstring . implode( ' ', $attribute ) . '/>';
+	}
+
+	return apply_filters( 'aucteeno_placeholder_img', $image_html, $size, array( 150, 150 ) );
+}

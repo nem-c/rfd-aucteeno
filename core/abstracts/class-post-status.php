@@ -45,9 +45,9 @@ abstract class Post_Status {
 	/**
 	 * Post status label count.
 	 *
-	 * @var string
+	 * @var array
 	 */
-	protected $label_count = '';
+	protected $label_count = array();
 
 	/**
 	 * Exclude post status from search.

@@ -116,7 +116,10 @@ class Loader {
 	 */
 	protected function run_filters(): void {
 		foreach ( $this->filters as $hook ) {
-			$method   = array( $hook['component'], $hook['callback'] );
+			$method = array( $hook['component'], $hook['callback'] );
+			if ( true === is_null( $hook['component'] ) ) {
+				$method = $hook['callback'];
+			}
 			$callable = is_callable( $method, true );
 
 			if ( true === $callable ) {
@@ -137,7 +140,10 @@ class Loader {
 	 */
 	protected function run_actions(): void {
 		foreach ( $this->actions as $hook ) {
-			$method   = array( $hook['component'], $hook['callback'] );
+			$method = array( $hook['component'], $hook['callback'] );
+			if ( true === is_null( $hook['component'] ) ) {
+				$method = $hook['callback'];
+			}
 			$callable = is_callable( $method, true );
 
 			if ( true === $callable ) {

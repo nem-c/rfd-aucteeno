@@ -14,8 +14,11 @@
 
 namespace RFD\Aucteeno;
 
+use RFD\Aucteeno\Admin\Post_States;
+use RFD\Aucteeno\Admin_Columns\Catalog_Admin_Columns;
 use RFD\Core\I18n;
 use RFD\Core\Abstracts\Init as Abstract_Init;
+use RFD\Live_Auctions\Post_Statuses\Expired_Post_Status;
 
 defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
@@ -70,6 +73,7 @@ class Init extends Abstract_Init {
 	 * Prepare hooks for both admin and frontend.
 	 */
 	protected function prepare_general(): void {
+		Expired_Post_Status::init( $this->loader );
 		$this->add_post_type( 'RFD\Aucteeno\Post_Types\Catalog_Post_Type' );
 		$this->add_post_type( 'RFD\Aucteeno\Post_Types\Listing_Post_Type' );
 	}
@@ -81,6 +85,18 @@ class Init extends Abstract_Init {
 		$this->add_meta_box( 'RFD\Aucteeno\Admin\Meta_Boxes\Catalog_Dates_Meta_Box' );
 		$this->add_meta_box( 'RFD\Aucteeno\Admin\Meta_Boxes\Catalog_Online_Meta_Box' );
 		$this->add_meta_box( 'RFD\Aucteeno\Admin\Meta_Boxes\Catalog_Location_Meta_Box' );
+
+		Catalog_Admin_Columns::init( $this->loader );
+		Post_States::init( $this->loader );
+	}
+
+	/**
+	 * Prepare hooks for frontend side only.
+	 */
+	protected function prepare_frontend(): void {
+		Query::init( $this->loader );
+		Template_Loader::init( $this->loader );
+		Template_Hooks::init( $this->loader );
 	}
 
 	/**

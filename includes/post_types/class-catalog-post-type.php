@@ -87,4 +87,18 @@ class Catalog_Post_Type extends Post_Type {
 		'excerpt',
 		'thumbnail',
 	);
+
+	/**
+	 * Menu position.
+	 *
+	 * @var int
+	 */
+	protected $menu_position = 51;
+
+	/**
+	 * Menu icon.
+	 *
+	 * @var string
+	 */
+	protected $menu_icon = 'dashicons-calendar-alt';
 }

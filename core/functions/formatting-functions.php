@@ -21,7 +21,7 @@ defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
  */
 function rfd_string_to_bool( $string ): bool { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
 	if ( is_string( $string ) ) {
-		$bool = ( 'yes' === strtolower( $string ) || 'true' === strtolower( $string ) || '1' === $string );
+		$bool = ( 'yes' === strtolower( $string ) || 'true' === strtolower( $string ) || '1' === $string || 'yes' === strtolower( $string ) );
 	} elseif ( is_numeric( $string ) ) {
 		$bool = ( 1 === $string );
 	} elseif ( is_bool( $string ) ) {
@@ -203,4 +203,20 @@ function rfd_timezone_string(): string { // phpcs:ignore Generic.Metrics.Cycloma
  */
 function rfd_strtolower( string $string ): string {
 	return function_exists( 'mb_strtolower' ) ? mb_strtolower( $string ) : strtolower( $string );
+}
+
+/**
+ * Implode and escape HTML attributes for output.
+ *
+ * @param array $raw_attributes Attribute name value pairs.
+ *
+ * @return string
+ */
+function rfd_implode_html_attributes( array $raw_attributes ): string {
+	$attributes = array();
+	foreach ( $raw_attributes as $name => $value ) {
+		$attributes[] = esc_attr( $name ) . '="' . esc_attr( $value ) . '"';
+	}
+
+	return implode( ' ', $attributes );
 }

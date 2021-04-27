@@ -13,9 +13,7 @@ use RFD\Core\Abstracts\Data;
 defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
 /**
- * WC Data Store Interface
- *
- * @version  3.0.0
+ * Data Store Interface
  */
 interface Object_Data_Store_Interface {
 	/**

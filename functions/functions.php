@@ -18,3 +18,7 @@ defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'constants.php';
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'datetime.php';
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'catalog-functions.php';
+require_once __DIR__ . DIRECTORY_SEPARATOR . 'conditional-functions.php';
+require_once __DIR__ . DIRECTORY_SEPARATOR . 'core-functions.php';
+require_once __DIR__ . DIRECTORY_SEPARATOR . 'options-functions.php';
+require_once __DIR__ . DIRECTORY_SEPARATOR . 'template-functions.php';
