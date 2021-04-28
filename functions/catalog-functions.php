@@ -129,3 +129,51 @@ function aucteeno_catalog_placeholder_img( $size = 'aucteeno_thumbnail', $attr =
 
 	return apply_filters( 'aucteeno_placeholder_img', $image_html, $size, array( 150, 150 ) );
 }
+
+/**
+ * Returns the catalog categories in a list.
+ *
+ * @param int $catalog_id Product ID.
+ * @param string $sep (default: ', ').
+ * @param string $before (default: '').
+ * @param string $after (default: '').
+ *
+ * @return string
+ */
+function aucteeno_get_catalog_category_list( int $catalog_id, $sep = ', ', $before = '', $after = '' ): string {
+	$categories = get_the_term_list( $catalog_id, 'catalog_cat', $before, $sep, $after );
+	if ( true === is_wp_error( $categories ) ) {
+		// @var WP_Error $error Error.
+		$error = $categories;
+		_doing_it_wrong( __FUNCTION__, esc_html( $error->get_error_message() ), esc_html( RFD_AUCTEENO_VERSION ) );
+		$categories = '';
+	} elseif ( false === $categories ) {
+		$categories = '';
+	}
+
+	return $categories;
+}
+
+/**
+ * Returns the product tags in a list.
+ *
+ * @param int $catalog_id Product ID.
+ * @param string $sep (default: ', ').
+ * @param string $before (default: '').
+ * @param string $after (default: '').
+ *
+ * @return string
+ */
+function aucteeno_get_catalog_tag_list( int $catalog_id, $sep = ', ', $before = '', $after = '' ): string {
+	$tags = get_the_term_list( $catalog_id, 'catalog_tag', $before, $sep, $after );
+	if ( true === is_wp_error( $tags ) ) {
+		// @var WP_Error $error Error.
+		$error = $tags;
+		_doing_it_wrong( __FUNCTION__, esc_html( $error->get_error_message() ), esc_html( RFD_AUCTEENO_VERSION ) );
+		$tags = '';
+	} elseif ( false === $tags ) {
+		$tags = '';
+	}
+
+	return $tags;
+}

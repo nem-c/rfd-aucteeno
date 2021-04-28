@@ -2,6 +2,9 @@
 /**
  * The Template for displaying catalog archives, including the main catalogs page which is a post type archive.
  *
+ * @package RFD\Aucteeno
+ * @subpackage RFD\Aucteeno\Templates
+ *
  * @codingStandardsIgnoreFile
  */
 

@@ -205,6 +205,28 @@ function aucteeno_get_default_products_per_row(): int {
 }
 
 /**
+ * Add default product tabs to product pages.
+ *
+ * @param array $tabs Array of tabs.
+ *
+ * @return array
+ */
+function aucteeno_default_catalog_tabs( $tabs = array() ) {
+	global $catalog, $post;
+
+	// Description tab - shows product content.
+	if ( $post->post_content ) {
+		$tabs['description'] = array(
+			'title'    => __( 'Description', 'rfd-aucteeno' ),
+			'priority' => 10,
+			'callback' => 'aucteeno_catalog_description_tab',
+		);
+	}
+
+	return $tabs;
+}
+
+/**
  * Output the start of a product loop. By default this is a UL.
  *
  * @param bool $echo Should echo?.
@@ -342,7 +364,7 @@ function aucteeno_get_catalog_class( $class = '', $catalog = null ): array { // 
  *
  * @return Catalog|false
  */
-function aucteeno_setup_product_data( $post ) {
+function aucteeno_setup_catalog_data( $post ) {
 	unset( $GLOBALS['catalog'] );
 
 	if ( is_int( $post ) ) {
@@ -364,6 +386,41 @@ function aucteeno_setup_product_data( $post ) {
 
 
 	return $GLOBALS['catalog'];
+}
+
+/**
+ * Output the related products.
+ *
+ * @param array $args Provided arguments.
+ */
+function aucteeno_related_catalogs( $args = array() ): void {
+	global $catalog;
+
+	if ( true === empty( $catalog ) ) {
+		return;
+	}
+
+	$defaults = array(
+		'posts_per_page' => 2,
+		'columns'        => 2,
+		'orderby'        => 'rand',
+		'order'          => 'desc',
+	);
+
+	$args = wp_parse_args( $args, $defaults );
+
+	/** TODO:
+	 * // Get visible related products then sort them at random.
+	 * $args['related_products'] = array_filter( array_map( 'aucteeno_get_product', aucteeno_get_related_products( $catalog->get_id(), $args['posts_per_page'] ) ), 'aucteeno_catalogs_array_filter_visible' );
+	 *
+	 * // Handle orderby.
+	 * $args['related_products'] = aucteeno_catalogs_array_orderby( $args['related_products'], $args['orderby'], $args['order'] );
+	 */
+	// Set global loop values.
+	aucteeno_set_loop_prop( 'name', 'related' );
+	aucteeno_set_loop_prop( 'columns', apply_filters( 'aucteeno_related_catalogs_columns', $args['columns'] ) );
+
+	aucteeno_get_template( 'single-catalog/related.php', $args );
 }
 
 /**
@@ -448,4 +505,52 @@ function aucteeno_template_loop_view_catalog( array $args ): void {
 	}
 
 	aucteeno_get_template( 'loop/view-catalog.php', $args );
+}
+
+/**
+ * Output the product title.
+ */
+function aucteeno_template_single_title(): void {
+	aucteeno_get_template( 'single-catalog/title.php' );
+}
+
+/**
+ * Output the product short description (excerpt).
+ */
+function aucteeno_template_single_excerpt(): void {
+	aucteeno_get_template( 'single-catalog/short-description.php' );
+}
+
+/**
+ * Output the product meta.
+ */
+function aucteeno_template_single_meta() {
+	aucteeno_get_template( 'single-catalog/meta.php' );
+}
+
+/**
+ * Output the product tabs.
+ */
+function aucteeno_output_catalog_data_tabs(): void {
+	aucteeno_get_template( 'single-catalog/tabs/tabs.php' );
+}
+
+/**
+ * Output the description tab content.
+ */
+function aucteeno_catalog_description_tab(): void {
+	aucteeno_get_template( 'single-catalog/tabs/description.php' );
+}
+
+/**
+ * Related catalogs output.
+ */
+function aucteeno_output_related_catalogs(): void {
+	$args = array(
+		'posts_per_page' => 4,
+		'columns'        => 4,
+		'orderby'        => 'rand', // @codingStandardsIgnoreLine.
+	);
+
+	aucteeno_related_catalogs( apply_filters( 'aucteeno_output_related_catalog_args', $args ) );
 }

@@ -7,6 +7,8 @@
  *
  * @var RFD\Aucteeno\Catalog $catalog
  * @var array $args
+ *
+ * @codingStandardsIgnoreFile
  */
 
 defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line

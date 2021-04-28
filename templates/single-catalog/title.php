@@ -1,6 +1,6 @@
 <?php
 /**
- * Catalogs Loop Start
+ * Single catalog title
  *
  * @package RFD\Aucteeno
  * @subpackage RFD\Aucteeno\Templates
@@ -10,5 +10,4 @@
 
 defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
-?>
-<ul class="catalogs columns-<?php echo esc_attr( aucteeno_get_loop_prop( 'columns' ) ); ?>">
+the_title( '<h1 class="product_title entry-title">', '</h1>' );
