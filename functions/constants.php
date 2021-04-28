@@ -7,6 +7,9 @@
 
 defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
+if ( false === defined( 'SAVEQUERIES' ) ) {
+	define( 'SAVEQUERIES', false );
+}
 
 const RFD_AUCTEENO_PLUGIN_PREFIX = '_acn_';
 
