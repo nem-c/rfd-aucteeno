@@ -5,7 +5,7 @@
  * @package RFD\Aucteeno
  */
 
-namespace RFD\Aucteeno;
+namespace RFD\Aucteeno\Template;
 
 use RFD\Core\Loader;
 

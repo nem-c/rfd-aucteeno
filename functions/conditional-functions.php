@@ -116,3 +116,15 @@ if ( ! function_exists( 'is_filtered' ) ) {
 		return apply_filters( 'aucteeno_is_filtered', false );
 	}
 }
+
+if ( ! function_exists( 'is_woocommerce_activated' ) ) {
+
+	/**
+	 * Check if WooCommerce is activated
+	 *
+	 * @return bool
+	 */
+	function is_woocommerce_activated(): bool {
+		return class_exists( 'woocommerce' );
+	}
+}

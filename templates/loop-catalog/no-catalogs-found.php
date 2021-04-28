@@ -4,7 +4,7 @@
  *
  */
 
-defined( 'ABSPATH' ) || exit;
+defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
 ?>
 <p class="aucteeno-info"><?php esc_html_e( 'No catalogs were found matching your selection.', 'rfd-aucteeno' ); ?></p>

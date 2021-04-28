@@ -8,6 +8,8 @@
  * @codingStandardsIgnoreFile
  */
 
+use RFD\Aucteeno\Template\Template_Catalog;
+
 defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
 get_header( 'aucteeno' ); ?>
@@ -16,8 +18,8 @@ get_header( 'aucteeno' ); ?>
 /**
  * Hook: aucteeno_before_main_content.
  *
- * @hooked aucteeno_output_content_wrapper - 10 (outputs opening divs for the content)
- * @hooked aucteeno_breadcrumb - 20
+ * @hooked Template_Hooks::content_wrapper_start - 10 (outputs opening divs for the content)
+ * @hooked Template_Hooks::breadcrumb - 20
  */
 do_action( 'aucteeno_before_main_content' );
 ?>
@@ -33,7 +35,7 @@ do_action( 'aucteeno_before_main_content' );
 /**
  * Hook: aucteeno_after_main_content.
  *
- * @hooked aucteeno_output_content_wrapper_end - 10 (outputs closing divs for the content)
+ * @hooked Template_Hooks::content_wrapper_end - 10 (outputs closing divs for the content)
  */
 do_action( 'aucteeno_after_main_content' );
 ?>
@@ -42,7 +44,7 @@ do_action( 'aucteeno_after_main_content' );
 /**
  * Hook: aucteeno_sidebar.
  *
- * @hooked aucteeno_get_sidebar - 10
+ * @hooked Template_Hooks::get_sidebar - 10
  */
 do_action( 'aucteeno_sidebar' );
 ?>

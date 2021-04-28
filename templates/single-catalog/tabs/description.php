@@ -12,7 +12,7 @@ defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
 global $post;
 
-$heading = apply_filters( 'aucteeno_catalog_description_heading', __( 'Description', 'rfd-aucteeno' ) );
+$heading = apply_filters( 'aucteeno_catalog_description_heading', __( 'Sale Bill', 'rfd-aucteeno' ) );
 
 ?>
 

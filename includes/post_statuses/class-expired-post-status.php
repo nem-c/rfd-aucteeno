@@ -6,7 +6,7 @@
  * @subpackage RFD\Aucteeno\Post_Status
  */
 
-namespace RFD\Live_Auctions\Post_Statuses;
+namespace RFD\Aucteeno\Post_Statuses;
 
 use RFD\Core\Abstracts\Post_Status;
 

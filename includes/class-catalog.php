@@ -129,6 +129,42 @@ class Catalog extends Data {
 	}
 
 	/**
+	 * Get location string combined.
+	 *
+	 * @return string
+	 */
+	public function get_location_string(): string { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded
+		$address      = $this->get_location_address();
+		$address_2    = $this->get_location_address_2();
+		$city         = $this->get_location_city();
+		$postal_code  = $this->get_location_postal_code();
+		$state        = $this->get_location_state();
+		$country_iso2 = $this->get_location_country_iso2();
+
+		$location_string = $address;
+		if ( false === empty( $location_string ) ) {
+			$location_string .= ', ';
+		}
+		if ( false === empty( $address_2 ) ) {
+			$location_string .= $address_2 . ', ';
+		}
+		if ( false === empty( $city ) ) {
+			$location_string .= $city . ' ';
+		}
+		if ( false === empty( $state ) ) {
+			$location_string .= $state . ' ';
+		}
+		if ( false === empty( $postal_code ) ) {
+			$location_string .= $postal_code . ', ';
+		}
+		if ( false === empty( $country_iso2 ) ) {
+			$location_string .= $country_iso2;
+		}
+
+		return apply_filters( 'aucteeno_catalog_location_string', $location_string, $address, $address_2, $city, $postal_code, $state, $country_iso2 );
+	}
+
+	/**
 	 * Returns the children IDs if applicable. Overridden by child classes.
 	 *
 	 * @return array of IDs
@@ -144,6 +180,15 @@ class Catalog extends Data {
 	 */
 	public function view_catalog_text(): string {
 		return __( 'View', 'rfd-aucteeno' );
+	}
+
+	/**
+	 * Return View Catalog button text.
+	 *
+	 * @return string
+	 */
+	public function view_catalog_description(): string {
+		return __( 'View catalog', 'rfd-aucteeno' );
 	}
 
 	/**
@@ -514,6 +559,17 @@ class Catalog extends Data {
 		return floatval( $this->get_prop( 'location_longitude', $context ) );
 	}
 
+	/**
+	 * Get Location Longitude.
+	 *
+	 * @param string $context What the value is for. Valid values are view and edit.
+	 *
+	 * @return string|null
+	 */
+	public function get_directions( $context = 'view' ): ?string {
+		return $this->get_prop( 'directions', $context );
+	}
+
 	/*
 	|--------------------------------------------------------------------------
 	| Setters
@@ -729,5 +785,14 @@ class Catalog extends Data {
 	 */
 	public function set_location_longitude( float $longitude ): void {
 		$this->set_prop( 'location_longitude', $longitude );
+	}
+
+	/**
+	 * Set Directions.
+	 *
+	 * @param string $directions Longitude.
+	 */
+	public function set_directions( string $directions ): void {
+		$this->set_prop( 'directions', $directions );
 	}
 }

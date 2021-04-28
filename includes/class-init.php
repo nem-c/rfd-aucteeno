@@ -18,7 +18,9 @@ use RFD\Aucteeno\Admin\Post_States;
 use RFD\Aucteeno\Admin_Columns\Catalog_Admin_Columns;
 use RFD\Core\I18n;
 use RFD\Core\Abstracts\Init as Abstract_Init;
-use RFD\Live_Auctions\Post_Statuses\Expired_Post_Status;
+use RFD\Aucteeno\Post_Statuses\Expired_Post_Status;
+use RFD\Aucteeno\Template\Template_Loader;
+use RFD\Aucteeno\Template\Template_Hooks;
 
 defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
@@ -74,6 +76,8 @@ class Init extends Abstract_Init {
 	 */
 	protected function prepare_general(): void {
 		Expired_Post_Status::init( $this->loader );
+		$this->add_taxonomy( 'RFD\Aucteeno\Taxonomies\Catalog_Cat_Taxonomy' );
+		$this->add_taxonomy( 'RFD\Aucteeno\Taxonomies\Catalog_Tag_Taxonomy' );
 		$this->add_post_type( 'RFD\Aucteeno\Post_Types\Catalog_Post_Type' );
 		$this->add_post_type( 'RFD\Aucteeno\Post_Types\Listing_Post_Type' );
 	}

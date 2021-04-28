@@ -8,6 +8,8 @@
  * @codingStandardsIgnoreFile
  */
 
+use RFD\Aucteeno\Template\Template_Catalog;
+
 defined( 'ABSPATH' ) || exit; // @phpstan-ignore-line
 
 global $catalog;
@@ -20,20 +22,19 @@ global $catalog;
 do_action( 'aucteeno_before_single_product' );
 
 if ( post_password_required() ) {
-	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	echo get_the_password_form();
 
 	return;
 }
 ?>
-<div id="catalog-<?php the_ID(); ?>" <?php aucteeno_catalog_class( '', $catalog ); ?>>
+<div id="catalog-<?php the_ID(); ?>" <?php Template_Catalog::class_attr( '', $catalog ); ?>>
 
 	<?php
 	/**
 	 * Hook: aucteeno_before_single_catalog_summary.
 	 *
-	 * @hooked aucteeno_show_catalog_sale_flash - 10
-	 * @hooked aucteeno_show_catalog_images - 20
+	 * @hooked Template_Catalog::sale_flash - 10
+	 * @hooked Template_Catalog::catalog_images - 20
 	 */
 	do_action( 'aucteeno_before_single_catalog_summary' );
 	?>
@@ -43,10 +44,10 @@ if ( post_password_required() ) {
 		/**
 		 * Hook: aucteeno_single_catalog_summary.
 		 *
-		 * @hooked aucteeno_template_single_title - 10
-		 * @hooked aucteeno_template_single_excerpt - 20
-		 * @hooked aucteeno_template_single_meta - 40
-		 * @hooked aucteeno_template_single_sharing - 50
+		 * @hooked Template_Catalog::single_title - 10
+		 * @hooked Template_Catalog::single_excerpt - 20
+		 * @hooked Template_Catalog::single_meta - 40
+		 * @hooked Template_Catalog::single_sharing - 50
 		 */
 		do_action( 'aucteeno_single_catalog_summary' );
 		?>
@@ -56,8 +57,8 @@ if ( post_password_required() ) {
 	/**
 	 * Hook: aucteeno_after_single_catalog_summary.
 	 *
-	 * @hooked aucteeno_output_catalog_data_tabs - 30
-	 * @hooked aucteeno_output_related_catalogs - 60
+	 * @hooked Template_Catalog::output_tabs - 30
+	 * @hooked Template_Catalog::output_related_catalogs - 60
 	 */
 	do_action( 'aucteeno_after_single_catalog_summary' );
 	?>
