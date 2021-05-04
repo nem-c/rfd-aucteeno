@@ -16,6 +16,7 @@ namespace RFD\Aucteeno;
 
 use RFD\Aucteeno\Admin\Post_States;
 use RFD\Aucteeno\Admin_Columns\Catalog_Admin_Columns;
+use RFD\Aucteeno\Theme_Starters\Kadence_Theme_Starter;
 use RFD\Core\I18n;
 use RFD\Core\Abstracts\Init as Abstract_Init;
 use RFD\Aucteeno\Post_Statuses\Expired_Post_Status;

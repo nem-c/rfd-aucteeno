@@ -7,6 +7,20 @@
  */
 
 /**
+ * Run woocommerce hook instead of aucteeno hook.
+ *
+ * @param string $aucteeno_hook Aucteeno hook name.
+ * @param string $woocommerce_hook WooCommerce hook name.
+ */
+function aucteeno_do_action( string $aucteeno_hook, string $woocommerce_hook ): void {
+	if ( true === is_woocommerce_activated() ) {
+		do_action( $woocommerce_hook );
+	} else {
+		do_action( $aucteeno_hook );
+	}
+}
+
+/**
  * Get other templates (e.g. product attributes) passing attributes and including the file.
  *
  * @param string $template_name Template name.

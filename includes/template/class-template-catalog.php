@@ -392,11 +392,11 @@ class Template_Catalog {
 	 * @param Loader $loader Loader object.
 	 * @param int $priority Priority.
 	 *
-	 * @return Catalog_Template_Helper
+	 * @return Template_Catalog
 	 */
-	public static function init( Loader $loader, $priority = 10 ): Catalog_Template_Helper {
+	public static function init( Loader $loader, $priority = 10 ): Template_Catalog {
 		if ( true === empty( self::$instance ) ) {
-			$helper         = new Catalog_Template_Helper();
+			$helper         = new Template_Catalog();
 			self::$instance = $helper;
 		}
 
@@ -435,7 +435,7 @@ class Template_Catalog {
 	public function loop_link_open(): void {
 		global $catalog;
 
-		$link = apply_filters( 'aucteeno_loop_product_link', get_the_permalink(), $catalog ); // @phpstan-ignore-line
+		$link = apply_filters( 'aucteeno_loop_catalog_link', get_the_permalink(), $catalog ); // @phpstan-ignore-line
 
 		echo '<a href="' . esc_url( $link ) . '" class="aucteeno-LoopCatalog-link aucteeno-loop-catalog__link">';
 	}
